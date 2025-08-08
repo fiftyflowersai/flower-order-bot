@@ -1,4 +1,16 @@
-langchain
-openai
-pandas
+# langchain
+# langchain_community
+# langchain_experimental
+# openai
+# pandas
+# openpyxl
+# python-dotenv
+# tabulate
+
+
+langchain 
+langchain-openai 
+langchain-experimental 
+pandas 
+python-dotenv 
 openpyxl

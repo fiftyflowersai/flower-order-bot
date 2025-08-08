@@ -57,9 +57,34 @@ def query_flower_data(code: str):
         import sys
         from contextlib import redirect_stdout, redirect_stderr
         import pandas as pd
+        import numpy as np
         
         # Create execution environment with the dataframe available
-        local_vars = {"df": df, "pd": pd, "len": len, "print": print}
+        local_vars = {
+            "df": df, 
+            "pd": pd, 
+            "np": np,
+            "len": len, 
+            "print": print,
+            "str": str,
+            "int": int,
+            "float": float,
+            "list": list,
+            "dict": dict,
+            "set": set,
+            "tuple": tuple,
+            "sum": sum,
+            "max": max,
+            "min": min,
+            "sorted": sorted
+        }
+        
+        # Clean the code - remove extra quotes if present
+        code = code.strip()
+        if code.startswith('"') and code.endswith('"'):
+            code = code[1:-1]
+        if code.startswith("'") and code.endswith("'"):
+            code = code[1:-1]
         
         # Capture both stdout and stderr
         stdout_capture = io.StringIO()
@@ -69,12 +94,23 @@ def query_flower_data(code: str):
             try:
                 # Try to evaluate as expression first (for simple queries)
                 if not any(keyword in code.lower() for keyword in ['import', 'def', 'class', 'for', 'while', 'if', 'elif', 'else', '=', 'del', 'global', 'nonlocal']):
-                    result = eval(code, {"__builtins__": {"len": len, "str": str, "int": int, "float": float, "list": list, "dict": dict, "set": set, "tuple": tuple, "sum": sum, "max": max, "min": min, "sorted": sorted}}, local_vars)
+                    result = eval(code, {"__builtins__": local_vars}, local_vars)
                     if result is not None:
-                        print(result)
+                        # Handle different types of results
+                        if hasattr(result, 'to_string'):  # DataFrame or Series
+                            print(result.to_string())
+                        elif hasattr(result, '__iter__') and not isinstance(result, str):
+                            # Handle arrays, lists, etc.
+                            if len(result) > 10:  # Limit output for large results
+                                print(f"First 10 items: {list(result)[:10]}")
+                                print(f"... (showing 10 of {len(result)} total items)")
+                            else:
+                                print(result)
+                        else:
+                            print(result)
                 else:
                     # Execute as statement
-                    exec(code, {"__builtins__": {"len": len, "str": str, "int": int, "float": float, "list": list, "dict": dict, "set": set, "tuple": tuple, "sum": sum, "max": max, "min": min, "sorted": sorted, "print": print}}, local_vars)
+                    exec(code, {"__builtins__": local_vars}, local_vars)
             except Exception as e:
                 print(f"Execution error: {str(e)}")
         
@@ -100,6 +136,45 @@ tools = [
         description="Execute Python code to analyze the flower products dataframe 'df'. Use pandas operations like df.head(), df.info(), df['Product name'].value_counts(), df.groupby('Group').size(), etc. The dataframe has columns like 'Product name', 'Group', 'Subgroup', 'Colors (by semicolon)', etc."
     )
 ]
+
+# Helper function for quick queries
+def quick_query(query_type, param=None):
+    """Quick query function for common requests"""
+    try:
+        if query_type == "roses":
+            # Find products with rose in the name
+            result = df[df['Product name'].str.contains('rose', case=False, na=False)]
+            if len(result) > 0:
+                return f"Found {len(result)} products with 'rose' in the name:\n" + result[['Product name', 'Colors (by semicolon)']].head(5).to_string()
+            else:
+                return "No products found with 'rose' in the name."
+        
+        elif query_type == "cool_colors":
+            # Find products with cool colors for weddings
+            cool_colors = df[df['Colors (by semicolon)'].str.contains('Blue|Purple|Lavender|Green|Sage|Teal', case=False, na=False)]
+            if len(cool_colors) > 0:
+                sample = cool_colors[['Product name', 'Colors (by semicolon)', 'Group']].head(5)
+                return f"Found {len(cool_colors)} products with cool colors. Here are 5 examples:\n" + sample.to_string()
+            else:
+                return "No products found with cool colors."
+        
+        elif query_type == "vase_life":
+            # Find products with longest vase life
+            vase_life_col = 'attributes.Expected Vase Life'
+            if vase_life_col in df.columns:
+                # Remove NaN values and find max
+                valid_vase_life = df[df[vase_life_col].notna()]
+                if len(valid_vase_life) > 0:
+                    max_vase_life = valid_vase_life.loc[valid_vase_life[vase_life_col].idxmax()]
+                    return f"Product with longest vase life:\nName: {max_vase_life['Product name']}\nVase Life: {max_vase_life[vase_life_col]}"
+                else:
+                    return "No vase life data available for products."
+            else:
+                return "Vase life column not found in the dataset."
+        
+        return "Query type not recognized."
+    except Exception as e:
+        return f"Error in quick query: {str(e)}"
 
 # Get the react prompt template
 try:
@@ -141,7 +216,7 @@ agent_executor = AgentExecutor(
     agent=agent, 
     tools=tools, 
     verbose=True, 
-    max_iterations=5,
+    max_iterations=10,  # Increased from 5 to 10
     handle_parsing_errors=True
 )
 
@@ -161,8 +236,20 @@ while True:
         break
     
     try:
-        response = agent_executor.invoke({"input": query})
-        print("Bot:", response["output"])
+        # Check for common quick queries first
+        if "rose" in query.lower() and ("show" in query.lower() or "find" in query.lower()):
+            response = quick_query("roses")
+            print("Bot:", response)
+        # elif "cool color" in query.lower() or ("wedding" in query.lower() and "june" in query.lower()):
+        #     response = quick_query("cool_colors")
+        #     print("Bot:", response)
+        elif "vase life" in query.lower() and "longest" in query.lower():
+            response = quick_query("vase_life")
+            print("Bot:", response)
+        else:
+            # Use the agent for more complex queries
+            response = agent_executor.invoke({"input": query})
+            print("Bot:", response["output"])
     except Exception as e:
         print(f"Error: {e}")
         print("Please try rephrasing your question or check if your data file exists.")

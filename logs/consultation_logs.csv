@@ -1,0 +1,290 @@
+timestamp,user_message,bot_response,phase,event_date,season,event_theme,preferences
+2025-08-18T17:34:50.600078,June 18th!,Agent stopped due to iteration limit or time limit.,theme,June 18th!,summer,,{}
+2025-08-18T17:46:30.172179,RECOMMENDATIONS_GENERATED,"Based on your Wedding in summer, here are 5 beautiful recommendations for you:
+
+1. **Pink Innocence Carnation Flowers** (Carnations)
+   Colors: Light Pink
+   Price: Contact for pricing
+
+2. **La Vie en Blush Spray Roses** (Spray Roses)
+   Colors: Blush;Light Pink
+   Price: Contact for pricing
+
+3. **Cotton Candy Pink Tinted Football Mum Flowers** (Disbud)
+   Colors: Light Pink;Pink
+   Price: Contact for pricing
+
+4. **Fresh Blueberry Purple Rose Bouquet** (Bouquets)
+   Colors: Pink;Fuchsia;Purple
+   Price: Contact for pricing
+
+5. **Shades Of Pink DIY Flower Kit** (DIY Flower Kits)
+   Colors: Light Pink;Hot Pink;Green
+   Price: Contact for pricing
+
+
+
+Would you like more information about any of these options, or would you like to see different recommendations?",recommendations,June 3rd!,summer,Wedding,"{""colors"": [""pink""], ""raw"": ""Light Pink""}"
+2025-08-18T18:07:04.036530,RECOMMENDATIONS_GENERATED,"Based on your Wedding in summer, here are 5 beautiful recommendations for you:
+
+1. **Cotton Candy Hot Pink Rose** (Standard Roses)
+   Colors: Hot Pink
+   Price: Contact for pricing
+
+2. **Sweet and Sassy Tropical Centerpiece** (Centerpieces)
+   Colors: Hot Pink;Green
+   Price: Contact for pricing
+
+3. **Prismatic Pink Spray Roses** (Spray Roses)
+   Colors: Pink
+   Price: Contact for pricing
+
+4. **Peachy Pink Cottage Yarrow Flowers** (Yarrow)
+   Colors: Dusty Rose;Blush;Light Pink;Peach
+   Price: Contact for pricing
+
+5. **Watermelon Sugar Flower Centerpiece** (Centerpieces)
+   Colors: Blush;Light Pink;Hot Pink;Coral;Peach;Chartreuse;Sage Green;Green
+   Price: Contact for pricing
+
+
+
+Would you like more information about any of these options, or would you like to see different recommendations?",recommendations,June 3rd!,summer,Wedding,"{""colors"": [""pink""], ""raw"": ""Light Pink""}"
+2025-08-18T18:07:48.408029,RECOMMENDATIONS_GENERATED,"Based on your birthday in summer, here are 5 beautiful recommendations for you:
+
+1. **Pink Pastel Hypericum Berry Garland** (Garlands)
+   Colors: Peach;Lime Green;Chartreuse
+   Price: Contact for pricing
+
+2. **Green Designer Hypericum Berries** (Hypericum)
+   Colors: Lime Green;Chartreuse
+   Price: Contact for pricing
+
+3. **Purple Succulent Flower** (Succulent)
+   Colors: Green
+   Price: Contact for pricing
+
+4. **ADVANTAGE Plus Floral Foam Brick** (Supplies)
+   Colors: Green
+   Price: Contact for pricing
+
+5. **Salal Lemon Leaf Greenery** (Greenery)
+   Colors: True Green;Green
+   Price: Contact for pricing
+
+
+
+Would you like more information about any of these options, or would you like to see different recommendations?",recommendations,July 20,summer,birthday,"{""colors"": [""green""], ""raw"": ""green""}"
+2025-08-18T18:13:01Z,wedding,"No problem! Do you have a particular theme or style in mind? (e.g., rustic, elegant, modern, bohemian, or say 'no theme' to skip)",theme,wedding,,,,,"{""colors"": [], ""flowers"": [], ""raw"": """"}"
+2025-08-18T18:13:12Z,modern,"What kind of flower arrangement are you looking for? (e.g., DIY flower kits, ready-made bouquets, centerpieces, focal flowers, or custom arrangements)",effort,wedding,,,modern,,"{""colors"": [], ""flowers"": [], ""raw"": """"}"
+2025-08-18T18:13:19Z,bouquet,"Any color palette you love (e.g., blush & white) or specific flowers (e.g., roses, ranunculus)? You can say 'no preference'.",preferences,wedding,,,modern,bouquets,"{""colors"": [], ""flowers"": [], ""raw"": """"}"
+2025-08-18T18:18:29Z,wedding,"No problem! Do you have a particular theme or style in mind? (e.g., rustic, elegant, modern, bohemian, or say 'no theme' to skip)",theme,wedding,,,,,"{""colors"": [], ""flowers"": [], ""raw"": """"}"
+2025-08-18T18:18:33Z,no theme,"What kind of flower arrangement are you looking for? (e.g., DIY flower kits, ready-made bouquets, centerpieces, focal flowers, or custom arrangements)",effort,wedding,,,,,"{""colors"": [], ""flowers"": [], ""raw"": """"}"
+2025-08-18T18:18:39Z,bouquet,"Any color palette you love (e.g., blush & white) or specific flowers (e.g., roses, ranunculus)? You can say 'no preference'.",preferences,wedding,,,,bouquets,"{""colors"": [], ""flowers"": [], ""raw"": """"}"
+2025-08-18T18:18:45Z,RECOMMENDATIONS_GENERATED,"Based on your **wedding** with **bouquets**, here are 1 lovely picks:
+
+
+1. **Delightfully Pink Wedding Flower Bouquet** (Bouquets)
+   • Type: Bouquets
+   • Colors: Blush;Pink;Hot Pink
+   • Price: Contact for pricing
+
+
+Would you like delivery timing for any of these, or should I adjust the preferences?",recommendations,wedding,,,,bouquets,"{""colors"": [""blush""], ""flowers"": [], ""raw"": ""blush""}"
+2025-08-18T18:18:45Z,blush,"Based on your **wedding** with **bouquets**, here are 1 lovely picks:
+
+
+1. **Delightfully Pink Wedding Flower Bouquet** (Bouquets)
+   • Type: Bouquets
+   • Colors: Blush;Pink;Hot Pink
+   • Price: Contact for pricing
+
+
+Would you like delivery timing for any of these, or should I adjust the preferences?",recommendations,wedding,,,,bouquets,"{""colors"": [""blush""], ""flowers"": [], ""raw"": ""blush""}"
+2025-08-18T18:20:09Z,holiday,"No problem! Do you have a particular theme or style in mind? (e.g., rustic, elegant, modern, bohemian, or say 'no theme' to skip)",theme,holiday,,,,,"{""colors"": [], ""flowers"": [], ""raw"": """"}"
+2025-08-18T18:20:10Z,no theme,"What kind of flower arrangement are you looking for? (e.g., DIY flower kits, ready-made bouquets, centerpieces, focal flowers, or custom arrangements)",effort,holiday,,,,,"{""colors"": [], ""flowers"": [], ""raw"": """"}"
+2025-08-18T18:20:24Z,focal flowers,"Any color palette you love (e.g., blush & white) or specific flowers (e.g., roses, ranunculus)? You can say 'no preference'.",preferences,holiday,,,,focal flowers,"{""colors"": [], ""flowers"": [], ""raw"": """"}"
+2025-08-18T18:20:28Z,RECOMMENDATIONS_GENERATED,"Based on your **holiday** with **focal flowers**, here are 5 lovely picks:
+
+
+1. **Snowy Pine Holiday Centerpieces** (Centerpieces)
+   • Type: Centerpieces
+   • Colors: White
+   • Price: Contact for pricing
+
+2. **White Gold Holiday Centerpiece** (Centerpieces)
+   • Type: Centerpieces
+   • Colors: White;Blush;Chartreuse;Forest Green;Gold
+   • Price: Contact for pricing
+
+3. **Holiday Market DIY Flower Kit** (DIY Flower Kits)
+   • Type: DIY Flower Kits
+   • Colors: White;Red;Green
+   • Price: Contact for pricing
+
+4. **Fire Red Holiday Rose Bouquet** (Bouquets)
+   • Type: Bouquets
+   • Colors: Red
+   • Price: Contact for pricing
+
+5. **Lilies and Bling Holiday DIY Flower Kit** (DIY Flower Kits)
+   • Type: DIY Flower Kits
+   • Colors: Pink
+   • Price: Contact for pricing
+
+
+Would you like delivery timing for any of these, or should I adjust the preferences?",recommendations,holiday,,,,focal flowers,"{""colors"": [""pink""], ""flowers"": [], ""raw"": ""light pink""}"
+2025-08-18T18:20:28Z,light pink,"Based on your **holiday** with **focal flowers**, here are 5 lovely picks:
+
+
+1. **Snowy Pine Holiday Centerpieces** (Centerpieces)
+   • Type: Centerpieces
+   • Colors: White
+   • Price: Contact for pricing
+
+2. **White Gold Holiday Centerpiece** (Centerpieces)
+   • Type: Centerpieces
+   • Colors: White;Blush;Chartreuse;Forest Green;Gold
+   • Price: Contact for pricing
+
+3. **Holiday Market DIY Flower Kit** (DIY Flower Kits)
+   • Type: DIY Flower Kits
+   • Colors: White;Red;Green
+   • Price: Contact for pricing
+
+4. **Fire Red Holiday Rose Bouquet** (Bouquets)
+   • Type: Bouquets
+   • Colors: Red
+   • Price: Contact for pricing
+
+5. **Lilies and Bling Holiday DIY Flower Kit** (DIY Flower Kits)
+   • Type: DIY Flower Kits
+   • Colors: Pink
+   • Price: Contact for pricing
+
+
+Would you like delivery timing for any of these, or should I adjust the preferences?",recommendations,holiday,,,,focal flowers,"{""colors"": [""pink""], ""flowers"": [], ""raw"": ""light pink""}"
+2025-08-18T18:21:09Z,RECOMMENDATIONS_GENERATED,"Based on your **holiday** with **focal flowers**, here are 5 lovely picks:
+
+
+1. **St. Augustine Holly Holiday Greenery** (Greenery)
+   • Type: Winter Greens
+   • Colors: True Red;Red
+   • Price: Contact for pricing
+
+2. **Antique Holiday Rose Flower Centerpiece** (Centerpieces)
+   • Type: Centerpieces
+   • Colors: White;Red;Gold
+   • Price: Contact for pricing
+
+3. **Warm Red Pinecone Holiday Centerpieces** (Centerpieces)
+   • Type: Centerpieces
+   • Colors: Red;Green
+   • Price: Contact for pricing
+
+4. **Jingle Bells Traditional Holiday Bouquet** (Bouquets)
+   • Type: Bouquets
+   • Colors: Red;Green;Gold
+   • Price: Contact for pricing
+
+5. **Fire Red Holiday Rose Bouquet** (Bouquets)
+   • Type: Bouquets
+   • Colors: Red
+   • Price: Contact for pricing
+
+
+Would you like delivery timing for any of these, or should I adjust the preferences?",recommendations,holiday,,,,focal flowers,"{""colors"": [""pink""], ""flowers"": [], ""raw"": ""light pink""}"
+2025-08-18T18:21:09Z,hi,"Based on your **holiday** with **focal flowers**, here are 5 lovely picks:
+
+
+1. **St. Augustine Holly Holiday Greenery** (Greenery)
+   • Type: Winter Greens
+   • Colors: True Red;Red
+   • Price: Contact for pricing
+
+2. **Antique Holiday Rose Flower Centerpiece** (Centerpieces)
+   • Type: Centerpieces
+   • Colors: White;Red;Gold
+   • Price: Contact for pricing
+
+3. **Warm Red Pinecone Holiday Centerpieces** (Centerpieces)
+   • Type: Centerpieces
+   • Colors: Red;Green
+   • Price: Contact for pricing
+
+4. **Jingle Bells Traditional Holiday Bouquet** (Bouquets)
+   • Type: Bouquets
+   • Colors: Red;Green;Gold
+   • Price: Contact for pricing
+
+5. **Fire Red Holiday Rose Bouquet** (Bouquets)
+   • Type: Bouquets
+   • Colors: Red
+   • Price: Contact for pricing
+
+
+Would you like delivery timing for any of these, or should I adjust the preferences?",recommendations,holiday,,,,focal flowers,"{""colors"": [""pink""], ""flowers"": [], ""raw"": ""light pink""}"
+2025-08-19T19:07:28Z,wedding,"No problem! Do you have a particular theme or style in mind? (e.g., rustic, elegant, modern, bohemian, or say 'no theme' to skip)",theme,wedding,,,,,"{""colors"": [], ""flowers"": [], ""raw"": """"}"
+2025-08-19T19:07:35Z,no theme,"What kind of flower arrangement are you looking for? (e.g., DIY flower kits, ready-made bouquets, centerpieces, focal flowers, or custom arrangements)",effort,wedding,,,,,"{""colors"": [], ""flowers"": [], ""raw"": """"}"
+2025-08-19T19:07:41Z,boquets,"What kind of flower arrangement are you looking for? (e.g., DIY flower kits, ready-made bouquets, centerpieces, focal flowers, or custom arrangements)",effort,wedding,,,,,"{""colors"": [], ""flowers"": [], ""raw"": """"}"
+2025-08-19T19:07:50Z,focal flowers,"Any color palette you love (e.g., blush & white) or specific flowers (e.g., roses, ranunculus)? You can say 'no preference'.",preferences,wedding,,,,focal flowers,"{""colors"": [], ""flowers"": [], ""raw"": """"}"
+2025-08-19T19:07:58Z,RECOMMENDATIONS_GENERATED,"Based on your **wedding** with **focal flowers**, here are 5 lovely picks:
+
+
+1. **50 Orchids and 40 Mini Calla Lily DIY Wedding Flower Kit** (DIY Flower Kits)
+   • Type: DIY Flower Kits
+   • Colors: White;Blush;Light Pink;Orange;Yellow;Lavender
+   • Price: Contact for pricing
+
+2. **Vintage Romance Minimony Wedding Collection** (Wedding Collection)
+   • Type: Wedding Collections
+   • Colors: White;Light Pink;Pink
+   • Price: Contact for pricing
+
+3. **Golden Affection Wedding Collection** (Wedding Collection)
+   • Type: Wedding Collections
+   • Colors: White;Yellow;Pale Yellow
+   • Price: Contact for pricing
+
+4. **400 Rose and 300 Carnation DIY Wedding Flower Kit** (DIY Flower Kits)
+   • Type: DIY Flower Kits
+   • Colors: White;Ivory;Pink;Hot Pink;Red;Peach;Orange;Yellow;Lavender
+   • Price: Contact for pricing
+
+5. **Wedding White Lace Cap Hydrangea Flower** (Hydrangea)
+   • Type: Deluxe
+   • Colors: White
+   • Price: Contact for pricing
+
+
+Would you like delivery timing for any of these, or should I adjust the preferences?",recommendations,wedding,,,,focal flowers,"{""colors"": [""white""], ""flowers"": [], ""raw"": ""white""}"
+2025-08-19T19:07:58Z,white,"Based on your **wedding** with **focal flowers**, here are 5 lovely picks:
+
+
+1. **50 Orchids and 40 Mini Calla Lily DIY Wedding Flower Kit** (DIY Flower Kits)
+   • Type: DIY Flower Kits
+   • Colors: White;Blush;Light Pink;Orange;Yellow;Lavender
+   • Price: Contact for pricing
+
+2. **Vintage Romance Minimony Wedding Collection** (Wedding Collection)
+   • Type: Wedding Collections
+   • Colors: White;Light Pink;Pink
+   • Price: Contact for pricing
+
+3. **Golden Affection Wedding Collection** (Wedding Collection)
+   • Type: Wedding Collections
+   • Colors: White;Yellow;Pale Yellow
+   • Price: Contact for pricing
+
+4. **400 Rose and 300 Carnation DIY Wedding Flower Kit** (DIY Flower Kits)
+   • Type: DIY Flower Kits
+   • Colors: White;Ivory;Pink;Hot Pink;Red;Peach;Orange;Yellow;Lavender
+   • Price: Contact for pricing
+
+5. **Wedding White Lace Cap Hydrangea Flower** (Hydrangea)
+   • Type: Deluxe
+   • Colors: White
+   • Price: Contact for pricing
+
+
+Would you like delivery timing for any of these, or should I adjust the preferences?",recommendations,wedding,,,,focal flowers,"{""colors"": [""white""], ""flowers"": [], ""raw"": ""white""}"

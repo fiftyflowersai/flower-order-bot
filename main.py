@@ -117,6 +117,14 @@ def query_flower_data(code: str):
         # Get captured output
         stdout_output = stdout_capture.getvalue()
         stderr_output = stderr_capture.getvalue()
+
+        # Fallback: if no stdout and df is not empty, show product names
+        if not stdout_output.strip() and not stderr_output.strip():
+            try:
+                if not df.empty:
+                    stdout_output = "No direct output. Showing product names:\n" + df["Product name"].to_string(index=False)
+            except Exception:
+                pass
         
         if stderr_output:
             return f"Error: {stderr_output}"

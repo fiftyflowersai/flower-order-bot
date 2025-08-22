@@ -1,0 +1,266 @@
+=== BASIC INFO ===
+Shape (rows, cols): (27680, 122)
+None
+
+=== MISSING VALUES (Top 20) ===
+                                    Missing Count  Missing %
+attributes.Average Garland Height           27679  99.996387
+attributes.Open Text 3                      27677  99.989162
+attributes.Arch Size                        27677  99.989162
+attributes.Average Spike Size               27675  99.981936
+attributes.Boutonniere Recipe               27674  99.978324
+attributes.Wedding Bouquet Recipe           27674  99.978324
+attributes.Open Text 2                      27672  99.971098
+attributes.Average Globe Size               27671  99.967486
+attributes.Foams Purpose                    27670  99.963873
+attributes.Average Diameter                 27664  99.942197
+attributes.Average Width                    27655  99.909682
+attributes.PDF Recipe                       27655  99.909682
+attributes.Garland & Wreath Height          27650  99.891618
+attributes.Average Pod Width                27645  99.873555
+attributes.Average Branch Length            27642  99.862717
+attributes.Branches Per Bunch               27642  99.862717
+attributes.Average Total Length             27633  99.830202
+attributes.Average Leaf Width               27623  99.794075
+attributes.Average Bloom Size               27620  99.783237
+attributes.Average Corsage Height           27616  99.768786
+
+=== UNIQUE VALUE COUNTS (Top 20) ===
+Variant ID                             18653
+Option value ID                         9933
+Product name                            4935
+Product ID                              4935
+attributes.Description                  4705
+attributes.SEO Title                    4662
+attributes.Shopify Tags                 4599
+attributes.SEO Description              2889
+Variant name                            1770
+Option ID                               1603
+Colors (by semicolon)                    942
+attributes.Recipe metafield              883
+Option value label                       855
+Tags (by semicolon)                      829
+attributes.Recipe description            660
+attributes.Size Breakdown                555
+attributes.Color Description             536
+Hash version                             446
+attributes.Holiday Occasion              414
+Option value (variant ID reference)      405
+dtype: int64
+
+=== NUMERIC SUMMARY ===
+          Product ID    Variant ID  Variant units  ...  Option value price  attributes.Fallback Lead Days  attributes.Fallback Max Units per Day
+count   27680.000000  2.767600e+04   27676.000000  ...        27680.000000                   27006.000000                           27341.000000
+mean    10437.946062  2.552209e+04      46.522149  ...            1.257720                       8.262460                           37257.795691
+std     36141.971603  1.347958e+05      67.753505  ...           15.552736                      10.877762                           62577.424441
+min         7.000000  7.000000e+00       0.000000  ...            0.000000                       0.000000                               0.000000
+25%      2321.000000  3.548750e+03       2.000000  ...            0.000000                       6.000000                            1000.000000
+50%      6305.500000  8.375500e+03      15.000000  ...            0.000000                       7.000000                           10000.000000
+75%      9727.000000  1.417900e+04      60.000000  ...            0.000000                       8.000000                           50000.000000
+max    312608.000000  1.106611e+06    1000.000000  ...          734.000000                     180.000000                          500000.000000
+
+[8 rows x 10 columns]
+
+=== CATEGORICAL SUMMARY (Top 20 cols) ===
+
+-- Hash version --
+Hash version
+4ca98687f3b9a920791d35271ecb514c    8872
+c84fdf7a48d67830457b0f2ef6efdf89    7451
+fe3e8e9c0bc211e4b0d014d93aa9a256     451
+737b57e1a1b45a1116eade8c36b3fe72     449
+bb1585d42790667b7ab41a7b10196a60     428
+c18244dc2e0ce36d503b0015988f14bf     381
+c4c70ce3cd02879c09274c56aaf085e8     348
+61788ddc6b1223f77a1f4260b43e83c0     324
+1e7c1b7fac6b94e4b43bf9d8c8aff33c     303
+5d1ad67aa2a466f6eb3e1e0ec07ecfd7     301
+Name: count, dtype: int64
+
+-- Product command --
+Product command
+UPSERT    27680
+Name: count, dtype: int64
+
+-- Product name --
+Product name
+Choose Your Own Florist Greens                       325
+Truffle Wedding Favors Box with Bow                  172
+Custom Colors Rainbow Roses                          152
+Choose Your Colors Rose Petals                       143
+Choose Your Own Colors Novelty Gerbera Daisies       136
+Choose Your Own Freeze Dried Rose Petals             122
+Christmas Themed Personalized Roses                  120
+100 Rose and 150 Carnation DIY Wedding Flower Kit    119
+Gender Reveal Boy Personalized Roses                 110
+Two Hearts Personalized Roses                        110
+Name: count, dtype: int64
+
+-- Product status --
+Product status
+active      26064
+inactive     1616
+Name: count, dtype: int64
+
+-- Group --
+Group
+Standard Roses        4565
+DIY Flower Kits       2903
+Centerpieces          2498
+Wedding Collection     967
+Carnations             933
+Petals                 870
+Baby's Breath          869
+Ready to Go            826
+Greenery               808
+Gerbera                710
+Name: count, dtype: int64
+
+-- Subgroup --
+Subgroup
+Standard             11630
+Premium               3152
+Tinted                2275
+Personalized          1760
+Multiple              1337
+Regular                653
+Mini                   586
+Dried Rose Petals      501
+DIY Greenery Kits      345
+Fresh Rose Petals      340
+Name: count, dtype: int64
+
+-- Buyer --
+Buyer
+Bertha Salas       12443
+Paula Ubillus       7134
+Cristina Pineda     6915
+Angie Yepez          474
+Liza Roeser            2
+Name: count, dtype: int64
+
+-- Variant command --
+Variant command
+UPSERT    27676
+IGNORE        4
+Name: count, dtype: int64
+
+-- Variant name --
+Variant name
+Wedding Combo Box    1371
+50 Roses              854
+150 Roses             808
+75 Roses              799
+100 Roses             772
+10 Bunches            769
+200 Roses             712
+20 Bunches            640
+5 Bunches             635
+15 Bunches            500
+Name: count, dtype: int64
+
+-- Variant measure units --
+Variant measure units
+stems            10135
+bunches           6497
+package           4225
+bouquet           3493
+1 foot             629
+Cup                509
+petal bags         344
+Corsage/Bout       320
+Chocolate Box      244
+Case               229
+Name: count, dtype: int64
+
+-- Variant status --
+Variant status
+active      27269
+inactive      407
+Name: count, dtype: int64
+
+-- Option command --
+Option command
+IGNORE    17709
+UPSERT     9971
+Name: count, dtype: int64
+
+-- Option label --
+Option label
+Choose Your Rose Color:            1145
+Choose Your Ribbon Color            881
+Choose Stamp Color:                 640
+Choose a size                       360
+Choose 10 Filler Flower Bunches     354
+Add Glitter?                        300
+Choose Your Rose Color              289
+Choose Your Color                   186
+Customize my 30 pack:               180
+Choose Your Mini Calla Color        144
+Name: count, dtype: int64
+
+-- Option value command --
+Option value command
+IGNORE    17747
+UPSERT     9933
+Name: count, dtype: int64
+
+-- Option value type --
+Option value type
+value        7934
+reference    1999
+Name: count, dtype: int64
+
+-- Option value label --
+Option value label
+White          394
+Red            284
+Yellow         280
+Lavender       238
+Orange         225
+Ivory          221
+Big Bloom      180
+Pink           180
+Small Bloom    180
+No             166
+Name: count, dtype: int64
+
+-- Option value default --
+Option value default
+NO     8532
+YES    1401
+Name: count, dtype: int64
+
+-- Option value status --
+Option value status
+active      9929
+inactive       4
+Name: count, dtype: int64
+
+-- Tags (by semicolon) --
+Tags (by semicolon)
+Jardines             1012
+multiple              854
+B Tinted              627
+Natuflora +vase       396
+Florist Combo         348
+Florida Garland       297
+Agrogana +vase        279
+New                   275
+Bouquet Natuflora     264
+SA                    243
+Name: count, dtype: int64
+
+-- Weekdays (by semicolon) --
+Weekdays (by semicolon)
+mon;tue;wed;thu;fri;sat    24766
+tue;wed;thu;fri;sat         2058
+mon;tue;wed;thu;fri          441
+tue;wed;thu;fri;sat;mon      238
+tue;wed;thu;fri;mon;sat       76
+tue;wed;thu;fri               57
+tue;wed;mon;thu;fri;sat       20
+tue;thu;fri;sat;wed            8
+fri                            4
+mon;tue;fri;sat;wed;thu        3
+Name: count, dtype: int64

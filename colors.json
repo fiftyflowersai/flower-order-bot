@@ -1,0 +1,84 @@
+{
+  "white": [
+    "ivory",
+    "white"
+  ],
+  "pink": [
+    "blush",
+    "blush pink",
+    "dusty pink",
+    "fuchsia",
+    "hot pink",
+    "light pink",
+    "magenta",
+    "pink",
+    "pinky lavender",
+    "true pink"
+  ],
+  "red": [
+    "burgundy",
+    "red",
+    "true red",
+    "wine red"
+  ],
+  "orange": [
+    "coral",
+    "dark orange",
+    "orange",
+    "peach",
+    "true orange"
+  ],
+  "yellow": [
+    "dark yellow",
+    "gold",
+    "mustard yellow",
+    "pale yellow",
+    "yellow"
+  ],
+  "green": [
+    "chartreuse",
+    "emerald green",
+    "forest green",
+    "green",
+    "light green updated",
+    "lime green",
+    "sage green",
+    "true green"
+  ],
+  "blue": [
+    "blue",
+    "light blue",
+    "soft blue"
+  ],
+  "purple": [
+    "dark purple",
+    "lavender",
+    "purple",
+    "true purple"
+  ],
+  "multicolor": [
+    "farm mixes",
+    "rainbow"
+  ],
+  "_unassigned": [
+    "amber",
+    "black",
+    "bronze",
+    "brown",
+    "champagne",
+    "choose your colors",
+    "clear",
+    "copper",
+    "cranberry",
+    "dusty rose",
+    "gray",
+    "mauve",
+    "multicolor",
+    "natural",
+    "rust",
+    "silver",
+    "sunset",
+    "teal",
+    "terracotta"
+  ]
+}

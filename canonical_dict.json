@@ -1,106 +1,98 @@
 {
   "colors": {
     "white": [
+      "white",
       "ivory",
-      "white"
+      "cream"
     ],
     "pink": [
-      "blush",
-      "blush pink",
-      "dusty pink",
-      "fuchsia",
-      "hot pink",
-      "light pink",
-      "magenta",
       "pink",
-      "pinky lavender",
-      "true pink"
+      "light pink",
+      "hot pink",
+      "blush"
     ],
     "red": [
-      "burgundy",
       "red",
-      "true red",
-      "wine red"
+      "burgundy",
+      "maroon"
     ],
     "orange": [
-      "coral",
-      "dark orange",
       "orange",
       "peach",
-      "true orange"
+      "coral"
     ],
     "yellow": [
-      "dark yellow",
-      "gold",
-      "mustard yellow",
-      "pale yellow",
-      "yellow"
+      "yellow",
+      "gold"
     ],
     "green": [
-      "chartreuse",
-      "emerald green",
-      "forest green",
       "green",
-      "light green updated",
-      "lime green",
-      "sage green",
-      "true green"
+      "lime",
+      "olive"
     ],
     "blue": [
       "blue",
-      "light blue",
-      "soft blue"
+      "navy",
+      "light blue"
     ],
     "purple": [
-      "dark purple",
-      "lavender",
       "purple",
-      "true purple"
+      "lavender",
+      "violet"
     ],
     "multicolor": [
-      "farm mixes",
+      "assorted",
+      "mixed",
       "rainbow"
+    ]
+  },
+  "seasons": {
+    "spring": [
+      "spring"
     ],
-    "_unassigned": [
-      "amber",
-      "black",
-      "bronze",
-      "brown",
-      "champagne",
-      "choose your colors",
-      "clear",
-      "copper",
-      "cranberry",
-      "dusty rose",
-      "gray",
-      "mauve",
-      "multicolor",
-      "natural",
-      "rust",
-      "silver",
-      "sunset",
-      "teal",
-      "terracotta"
+    "summer": [
+      "summer"
+    ],
+    "fall": [
+      "fall",
+      "autumn"
+    ],
+    "winter": [
+      "winter"
+    ],
+    "all": [
+      "all seasons",
+      "year-round"
     ]
   },
   "weekdays": {
-    "fri": [
-      "fri"
+    "monday": [
+      "mon",
+      "monday"
     ],
-    "mon": [
-      "mon"
+    "tuesday": [
+      "tue",
+      "tuesday"
     ],
-    "sat": [
-      "sat"
+    "wednesday": [
+      "wed",
+      "wednesday"
     ],
-    "thu": [
-      "thu"
+    "thursday": [
+      "thu",
+      "thursday"
     ],
-    "tue": [
-      "tue"
+    "friday": [
+      "fri",
+      "friday"
     ],
-    "wed": [
-      "wed"
+    "saturday": [
+      "sat",
+      "saturday"
+    ],
+    "sunday": [
+      "sun",
+      "sunday"
     ]
   }
 }

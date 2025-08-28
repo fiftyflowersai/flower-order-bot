@@ -1,0 +1,137 @@
+{
+  "unique_colors": [
+    "amber",
+    "black",
+    "blue",
+    "blush",
+    "blush pink",
+    "bronze",
+    "brown",
+    "burgundy",
+    "champagne",
+    "chartreuse",
+    "choose your colors",
+    "clear",
+    "copper",
+    "coral",
+    "cranberry",
+    "dark orange",
+    "dark purple",
+    "dark yellow",
+    "dusty pink",
+    "dusty rose",
+    "emerald green",
+    "farm mixes",
+    "forest green",
+    "fuchsia",
+    "gold",
+    "gray",
+    "green",
+    "hot pink",
+    "ivory",
+    "lavender",
+    "light blue",
+    "light green updated",
+    "light pink",
+    "lime green",
+    "magenta",
+    "mauve",
+    "multicolor",
+    "mustard yellow",
+    "natural",
+    "orange",
+    "pale yellow",
+    "peach",
+    "pink",
+    "pinky lavender",
+    "purple",
+    "rainbow",
+    "red",
+    "rust",
+    "sage green",
+    "silver",
+    "soft blue",
+    "sunset",
+    "teal",
+    "terracotta",
+    "true green",
+    "true orange",
+    "true pink",
+    "true purple",
+    "true red",
+    "white",
+    "wine red",
+    "yellow"
+  ],
+  "color_categories": {
+    "red": [
+      "red",
+      "true red",
+      "burgundy",
+      "cranberry",
+      "maroon",
+      "crimson"
+    ],
+    "pink": [
+      "pink",
+      "light pink",
+      "hot pink",
+      "true pink",
+      "blush",
+      "fuchsia",
+      "magenta",
+      "coral"
+    ],
+    "white": [
+      "white",
+      "ivory",
+      "cream",
+      "off-white"
+    ],
+    "yellow": [
+      "yellow",
+      "golden",
+      "amber",
+      "chartreuse",
+      "lemon"
+    ],
+    "orange": [
+      "orange",
+      "peach",
+      "sunset",
+      "terracotta",
+      "apricot"
+    ],
+    "purple": [
+      "purple",
+      "lavender",
+      "pinky lavender",
+      "violet",
+      "plum"
+    ],
+    "blue": [
+      "blue",
+      "soft blue",
+      "navy",
+      "light blue"
+    ],
+    "green": [
+      "green",
+      "sage",
+      "mint",
+      "lime"
+    ],
+    "brown": [
+      "brown",
+      "bronze",
+      "chocolate",
+      "tan"
+    ],
+    "mixed": [
+      "farm mixes",
+      "rainbow",
+      "multicolor",
+      "assorted"
+    ]
+  }
+}

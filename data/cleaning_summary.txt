@@ -1,0 +1,42 @@
+DATA CLEANING SUMMARY REPORT
+==================================================
+Final dataset size: 27676 rows, 26 columns
+
+KEY VARIABLES FOR CHATBOT:
+------------------------------
+BUDGET (Variant price):
+  - Available for 27676 products (100.0%)
+  - Price range: $0.00 - $4079.99
+  - Average price: $330.57
+
+EVENT TYPE (Holiday Occasions): 21 unique occasions
+  - Sample occasions: 4th of july, anniversary, baby shower, birthday, bridal shower, celebration of life, christmas, easter
+  - And 13 more...
+
+COLORS: 62 unique colors
+  - Sample colors: amber, black, blue, blush, blush pink, bronze, brown, burgundy, champagne, chartreuse
+  - And 52 more...
+
+EFFORT LEVEL (DIY Level):
+  - DIY From Scratch: 16241 products (58.7%)
+  - Ready To Go: 6275 products (22.7%)
+  - DIY In A Kit: 3372 products (12.2%)
+
+TOP PRODUCT GROUPS:
+  - Standard Roses: 4565 products
+  - DIY Flower Kits: 2903 products
+  - Centerpieces: 2498 products
+  - Wedding Collection: 967 products
+  - Carnations: 933 products
+  - Petals: 870 products
+  - Baby's Breath: 869 products
+  - Ready to Go: 824 products
+  - Greenery: 808 products
+  - Gerbera: 710 products
+
+FILES CREATED:
+--------------------
+- cleaned_flower_data.csv: Main cleaned dataset
+- color_mapping.json: Color categories and mappings
+- holiday_occasions.json: List of all occasions
+- product_types.json: List of all product types

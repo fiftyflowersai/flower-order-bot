@@ -1,61 +1,1935 @@
-=== BASIC INFO ===
-<class 'pandas.core.frame.DataFrame'>
-RangeIndex: 27680 entries, 0 to 27679
-Columns: 122 entries, Hash version to attributes.Intimate Package Includes
-dtypes: float64(9), int64(1), object(112)
-memory usage: 25.8+ MB
+FLOWER PRODUCT DATA - EDA REPORT
+
+==================================================
+DATA SIZE ANALYSIS
+==================================================
+Total rows: 27680
+Total columns: 122
+Data shape: (27680, 122)
 
 
-=== MISSING VALUES (Top 20) ===
-                                    Missing Count  Missing %
-attributes.Average Garland Height           27679  99.996387
-attributes.Open Text 3                      27677  99.989162
-attributes.Arch Size                        27677  99.989162
-attributes.Average Spike Size               27675  99.981936
-attributes.Boutonniere Recipe               27674  99.978324
-attributes.Wedding Bouquet Recipe           27674  99.978324
-attributes.Open Text 2                      27672  99.971098
-attributes.Average Globe Size               27671  99.967486
-attributes.Foams Purpose                    27670  99.963873
-attributes.Average Diameter                 27664  99.942197
-attributes.Average Width                    27655  99.909682
-attributes.PDF Recipe                       27655  99.909682
-attributes.Garland & Wreath Height          27650  99.891618
-attributes.Average Pod Width                27645  99.873555
-attributes.Average Branch Length            27642  99.862717
-attributes.Branches Per Bunch               27642  99.862717
-attributes.Average Total Length             27633  99.830202
-attributes.Average Leaf Width               27623  99.794075
-attributes.Average Bloom Size               27620  99.783237
-attributes.Average Corsage Height           27616  99.768786
+==================================================
+MISSING VALUES ANALYSIS
+==================================================
+Missing values report saved to 'all_missing_values.csv'
 
-=== UNIQUE VALUE COUNTS (Top 20) ===
-Variant ID                             18653
-Option value ID                         9933
-Product name                            4935
-Product ID                              4935
-attributes.Description                  4705
-attributes.SEO Title                    4662
-attributes.Shopify Tags                 4599
-attributes.SEO Description              2889
-Variant name                            1770
-Option ID                               1603
-Colors (by semicolon)                    942
-attributes.Recipe metafield              883
-Option value label                       855
-Tags (by semicolon)                      829
-attributes.Recipe description            660
-attributes.Size Breakdown                555
-attributes.Color Description             536
-Hash version                             446
-attributes.Holiday Occasion              414
-Option value (variant ID reference)      405
-dtype: int64
+Top 10 columns with most missing values:
+attributes.Average Garland Height: 27679 (100.00%)
+attributes.Open Text 3: 27677 (99.99%)
+attributes.Arch Size: 27677 (99.99%)
+attributes.Average Spike Size: 27675 (99.98%)
+attributes.Boutonniere Recipe: 27674 (99.98%)
+attributes.Wedding Bouquet Recipe: 27674 (99.98%)
+attributes.Open Text 2: 27672 (99.97%)
+attributes.Average Globe Size: 27671 (99.97%)
+attributes.Foams Purpose: 27670 (99.96%)
+attributes.Average Diameter: 27664 (99.94%)
 
-=== CHATBOT RAW VALUES SUMMARY ===
 
--- Group (124 unique after split) --
-301, agapanthus, ageratum, air plant, allium, alstroemerias, amaranthus, amaryllis, anemone, anthurium, artichoke, asters, astilbe, astrantia, baby's breath, berries, billy balls, bouquet bar, bouquets, bouts and corsages, bouvardia, branches, buddleia, calendula, calla lily, campanulas, carnations, cattails, celosia, centerpieces...
+==================================================
+COLUMNS OF INTEREST ANALYSIS
+==================================================
+Column: Product name
+--------------------
+Total values: 27680
+Non-null values: 27680
+Null values: 0 (0.00%)
+Sample unique values (10 shown):
+  1. 10 Deluxe Strung Orchid Leis
+  2. 10 Mini Calla Lilies and Leaf Centerpieces
+  3. 10 Single Strung Orchid Leis
+  4. 100 Carnations for Mother's Day
+  5. 100 Rose and 150 Carnation DIY Wedding Flower Kit
+  6. 100 Roses 120 Gerberas and 50 Spray Rose DIY Wedding Flower Kit
+  7. 100 Roses 50 Mini Callas 60 Gerbera Daisy DIY Wedding Flower Kit
+  8. 100 Roses and 15 to 20 Hydrangeas DIY Wedding Flower Kit
+  9. 100 Roses for Mother's Day
+  10. 100 Wholesale Assorted Roses
 
--- Subgroup (142 unique after split) --
-aranthera, arch, arches, asiatic, baby's breath garlands, bahlias, ball, bay leaf garlands, birds of paradise, blooms, branches, butterfly, button, cake, cloony, cockscomb, corsage supplies, cremons, cushion, cutters & shears, cymbidium blooms, cymbidium mini, cymbidium premium, daisy, david austin, decobeads, deluxe, dendrobium blooms, dendrobium garland, dendrobium lei...
+Column: Group
+-------------
+Total values: 27680
+Non-null values: 27680
+Null values: 0 (0.00%)
+Sample unique values (10 shown):
+  1. Orchids
+  2. Centerpieces
+  3. Carnations
+  4. DIY Flower Kits
+  5. Standard Roses
+  6. Ready to Go
+  7. Bouquets
+  8. Branches
+  9. Supplies
+  10. Wreaths
+
+Column: Variant price
+---------------------
+Total values: 27680
+Non-null values: 27676
+Null values: 4 (0.01%)
+Sample unique values (10 shown):
+  1. 504.99
+  2. 164.99
+  3. 274.99
+  4. 384.99
+  5. 454.99
+  6. 179.99
+  7. 634.99
+  8. 709.99
+  9. 754.99
+  10. 659.99
+
+Column: Seasonality (by semicolon)
+----------------------------------
+Total values: 27680
+Non-null values: 27680
+Null values: 0 (0.00%)
+Sample unique values (10 shown):
+  1. YR
+  2. Dec 15 - Dec 31;Jan 01 - Apr 20
+  3. Apr 20 - May 30
+  4. Dec 01 - Dec 31
+  5. Jan 01 - Jan 06
+  6. May 15 - May 31
+  7. Jan 01 - Feb 28
+  8. Sep 15 - Oct 31
+  9. May 29 - Sep 15
+  10. May 15 - Jul 30
+
+Column: Colors (by semicolon)
+-----------------------------
+Total values: 27680
+Non-null values: 26668
+Null values: 1012 (3.66%)
+Sample unique values (10 shown):
+  1. Farm Mixes
+  2. Magenta
+  3. White;Ivory;Pink;Hot Pink;Red;Peach;Orange;Yellow;Lavender
+  4. White;Light Pink;Hot Pink;Orange;Yellow;Lavender
+  5. Red
+  6. Pink;Red;Rainbow
+  7. White;Pink;Green
+  8. White;Light Pink;Pink;Hot Pink;Red;Yellow;Purple
+  9. Yellow
+  10. Sunset;Orange;Yellow
+
+Column: attributes.Recipe description
+-------------------------------------
+Total values: 27680
+Non-null values: 3492
+Null values: 24188 (87.38%)
+Sample unique values (10 shown):
+  1. Each centerpiece features a harmoniously hand-crafted arrangement of mini calla lilies and calla lea...
+  2. Each bouquet features a harmoniously hand-crafted arrangement of long-stemmed red roses with baby's ...
+  3. Each bouquet features a harmoniously hand-crafted arrangement of pink mayra roses, cream bellalinda,...
+  4. Each centerpiece features one Tillsandia air plant and a unique wood base.
+  5. Each bouquet features a harmoniously hand-crafted arrangement of alstroemeria in a color of your cho...
+  6. Each bouquet features a harmoniously hand-crafted arrangement of green-tipped yellow roses, green ba...
+  7. Each bouquet features a harmoniously hand-crafted arrangement of roses, eryngium, hydrangeas, and de...
+  8. <p>Each bouquet features a harmoniously hand-crafted arrangement of lavender &amp; purple cremon, pe...
+  9. Each centerpiece features a harmoniously hand-crafted arrangement of red roses, burgundy carnations,...
+  10. Each bouquet features a harmoniously hand-crafted arrangement of bi color orange and yellow roses.
+
+Column: attributes.DIY Level
+----------------------------
+Total values: 27680
+Non-null values: 25888
+Null values: 1792 (6.47%)
+Sample unique values (3 shown):
+  1. DIY From Scratch
+  2. Ready To Go
+  3. DIY In A Kit
+
+Column: attributes.Holiday Occasion
+-----------------------------------
+Total values: 27680
+Non-null values: 25728
+Null values: 1952 (7.05%)
+Sample unique values (10 shown):
+  1. Graduation
+  2. Wedding
+  3. Mother's Day
+  4. Bridal Shower;Wedding
+  5. Valentine's Day
+  6. Wedding;Sympathy
+  7. Mother's Day;Valentine's Day;Wedding;Engagement;Graduation;Easter
+  8. Christmas;Holiday
+  9. Baby Shower;Birthday;Bridal Shower;Easter;Mother's Day;Wedding;Valentine's Day
+  10. Sympathy;Easter;Thanksgiving;Wedding;Celebration of Life;Graduation
+
+Column: attributes.Description
+------------------------------
+Total values: 27680
+Non-null values: 27611
+Null values: 69 (0.25%)
+Sample unique values (10 shown):
+  1. <p>Fresh bulk Leis are custom made to order for your wedding ceremony, reception or special event. W...
+  2. <p>Find an array of wedding centerpieces at FiftyFlowers.com! These high end Mini Calla Lily and Lea...
+  3. <p>Orchid Flower Leis are custom made to order for your wedding ceremony, reception or special event...
+  4. <p>Mother's Day is just around the corner and what better way to show appreciation for all the hardw...
+  5. <p>A popular choice for our DIY brides, this Wedding Flower Combo Pack features 100 Ecuadorian Roses...
+  6. <p>This Wedding Flower Package features 100 Ecuadorian Roses, 120 Gerbera Daisies, and 50 Spray Rose...
+  7. <p>This Wedding Flower Package features 100 Ecuadorian Roses, 50 Mini Callas, and 60 Gerbera Daisies...
+  8. <p>For wedding flowers that are as beautiful as they are easy, use our DIY Wedding Pack 100 Roses an...
+  9. <p>Treat the extraordinary woman in your life to a lavish display of gratitude with our 100 Roses fo...
+  10. <p></p>
+
+==================================================
+UNIQUE VALUES COUNT (BASIC)
+==================================================
+Top columns by unique value count:
+Variant ID: 18653 unique values
+Option value ID: 9933 unique values
+Product name: 4935 unique values
+Product ID: 4935 unique values
+attributes.Description: 4705 unique values
+attributes.SEO Title: 4662 unique values
+attributes.Shopify Tags: 4599 unique values
+attributes.SEO Description: 2889 unique values
+Variant name: 1770 unique values
+Option ID: 1603 unique values
+Colors (by semicolon): 942 unique values
+attributes.Recipe metafield: 883 unique values
+Option value label: 855 unique values
+Tags (by semicolon): 829 unique values
+attributes.Recipe description: 660 unique values
+
+Columns with very few unique values (potential categories):
+attributes.Average Boutonniere Height: 1 unique values
+attributes.Average Centerpiece Width: 1 unique values
+attributes.Additional Info 7: 1 unique values
+attributes.Additional Info 8: 1 unique values
+attributes.Arch Size: 1 unique values
+attributes.Garland & Wreath Height: 1 unique values
+attributes.Average Garland Height: 1 unique values
+attributes.Average Corsage Height: 1 unique values
+attributes.Minimony Package Includes: 1 unique values
+attributes.Intimate Package Includes: 1 unique values
+
+==================================================
+SEMICOLON-SEPARATED VALUES ANALYSIS
+==================================================
+Column: Variant name
+--------------------
+Basic unique count: 1770
+Unique values after splitting by semicolon: 1772
+Sample unique split values (15 shown):
+  1. 8 Large Centerpieces
+  2. 14 Bunches
+  3. DIY Wedding Flower Package
+  4. Medium DIY Pack
+  5. Rush Delivery Fee $55
+  6. Light Pink Tinted Baby's Breath
+  7. 8 Mini Centerpieces
+  8. 20 Inch - 1 Wreath
+  9. 1 Mixed Color Bouquet
+  10. 7 Small Centerpieces
+  11. 4 Small Bouquetos
+  12. 6 Month Subscription
+  13. 400 Roses
+  14. 5 Bunches or 50 Elephant Ears
+  15. 125 Stems
+
+Column: Option label
+--------------------
+Basic unique count: 284
+Unique values after splitting by semicolon: 288
+Sample unique split values (15 shown):
+  1. Color #4 - 5 Bunches
+  2. Choose 20 Bunches Filler Flower
+  3. Bunch #2 - 25 Roses
+  4. Rose Petal Color 3
+  5. Choose 10 Greenery Bunches
+  6. Subscription order? Choose Delivery Frequency:
+  7. Choose Rose Color
+  8. Rose 75 Tinted Pack
+  9. Choose Bunch #4 25 Rose Color
+  10. 4 Bunches of Estelle Solidago
+  11. Bunch #5
+  12. Rose Petal Color 2
+  13. Choose Your Own Color Roses
+  14. Choose your bloom size
+  15. Choose Your Corsage Type
+
+Column: Option value label
+--------------------------
+Basic unique count: 855
+Unique values after splitting by semicolon: 858
+Sample unique split values (15 shown):
+  1. Purple Mini Calla Lily Flower - Cream Purple Mini Calla Lily
+  2. J
+  3. Lavender Purple Stock Flower - Lavender Purple Stock 10 Stem Bunches
+  4. Bicolor Yellow with Red Brushstrokes Oriental Lily - Bicolor Yellow with Red Brushstrokes Oriental Lily
+  5. Green Hypericum Berries - 2 bunches Green Hypericum Berries
+  6. Peaches Designer Hypericum Berries - Peach Hypericum 10 stems bunches
+  7. Rose Petals White with Pink Tips - Bicolor White with Pink Tips
+  8. Yellow Daisy Flowers - Yellow Daisy 10 Stem Bunches
+  9. E
+  10. David Austin Light Pink Miranda Garden Rose - David Austin Garden Rose Light Pink Miranda
+  11. White Magic Vanda Orchids - White Dendrobium Orchids Flower
+  12. Light to Medium Orange Roses
+  13. Cream Roses
+  14. 3 Extra Boutonnieres & 4 Extra Corsages
+  15. Light Pink Gerbera Daisy - Pink Light Daisy 5-8 stem bunches
+
+Column: Tags (by semicolon)
+---------------------------
+Basic unique count: 829
+Unique values after splitting by semicolon: 801
+Sample unique split values (15 shown):
+  1. Peony April B | HIDDEN
+  2. Elite Christmas
+  3. FFX2 Bouquet Natuflora Christmas
+  4. SA
+  5. Johnene | Jardines
+  6. Greens Tropical
+  7. Design Live Special
+  8. B Vintage S
+  9. Valentines RED ROSE
+  10. Natuflora - Sorbet +vase
+  11. Camflor Wreath Mixed 2 | NEEDPIC
+  12. Iris - C Tinted
+  13. Natuflora - White New +vase
+  14. Mini Calla - SA Tinted
+  15. Agrogana +vase  Christmas
+
+Column: Weekdays (by semicolon)
+-------------------------------
+Basic unique count: 17
+Unique values after splitting by semicolon: 6
+Sample unique split values (6 shown):
+  1. wed
+  2. sat
+  3. fri
+  4. tue
+  5. thu
+  6. mon
+
+Column: Seasonality (by semicolon)
+----------------------------------
+Basic unique count: 256
+Unique values after splitting by semicolon: 227
+Sample unique split values (15 shown):
+  1. Nov 01 - Nov 30
+  2. May 28 - Dec 31
+  3. Apr 15 - Jul 31
+  4. Jan 01 - May 20
+  5. Dec 02 - Dec 03
+  6. Sep 01 - Sep 05
+  7. Jan 01 - Feb 28
+  8. Jul 01 - Oct 31
+  9. Jul 01 - Aug 15
+  10. Mar 10 - Mar 30
+  11. Nov 15 - Dec 31
+  12. Jan 01 - May 30
+  13. Jun 15 - Aug 31
+  14. Sep 01 - Sep 10
+  15. Jan 01 - Jan 31
+
+Column: Colors (by semicolon)
+-----------------------------
+Basic unique count: 942
+Unique values after splitting by semicolon: 62
+Sample unique split values (15 shown):
+  1. Coral
+  2. True Pink
+  3. Magenta
+  4. Pinky Lavender
+  5. Fuchsia
+  6. Amber
+  7. Gray
+  8. Terracotta
+  9. Soft Blue
+  10. True Red
+  11. Cranberry
+  12. Lavender
+  13. Bronze
+  14. Chartreuse
+  15. Green
+
+Column: attributes.Type Description
+-----------------------------------
+Basic unique count: 25
+Unique values after splitting by semicolon: 27
+Sample unique split values (15 shown):
+  1. <p>Our magnificent arch pieces are specially handcrafted by designers and feature a mix of gunnii eucalyptus, Israeli ruscus, and seeded eucalyptus.</p>
+  2. Designed for elopements, courthouse weddings, and intimate minimony ceremonies, these pre-arranged floral sets are ready to go
+  3. <p>Our centerpieces arrive beautifully pre-arranged, making setup effortless and stress-free. All you need to do is trim the stems, place them in your favorite vases, and enjoy the stunning results. That's it!</p>
+  4. Our ready-to-go packs include a 12-piece option with 6 boutonnieres and 6 pin-on corsages, or a 24-piece option with 12 of each—perfect for events of any size.
+  5. Our arrangements are easy to use. Each bouquet comes pre-arranged and requires little to no special design skills. All you have to do is trim the stems and place the flowers in your vase. That's it!
+  6. <p>Our DIY Flower Kits include all the flowers and greenery needed to create stunning floral designs, from bouquets to centerpieces and beyond. With fresh blooms ready to arrange, you can effortlessly design for weddings, special events, or any occasion that calls for the beauty of flowers. Available in multiple kit sizes, there's an option for everything from intimate gatherings to large-scale celebrations!</p>
+  7. Our DIY Flower Kits include all the flowers and greenery needed to create stunning floral designs, from bouquets to centerpieces and beyond. With fresh blooms ready to arrange, you can effortlessly design for weddings, special events, or any occasion that calls for the beauty of flowers. Available in multiple kit sizes, there's an option for everything from intimate gatherings to large-scale celebrations!
+  8. <p>Our arrangements are easy to use. Each bouquet comes pre-arranged and requires little to no special design skills. All you have to do is trim the stems and place the flowers in your vase. That's it!</p>
+  9. Our wedding collections are curated to provide everything you need for your big day. From bouquets and boutonnieres to corsages, centerpieces, garlands, and arch flowers, you'll find options available in a range of pre-arranged or DIY packages to suit any wedding size or style.
+  10. Our ready-to-go packs include 16 or 30 pre-made pieces in your chosen color, with your choice of boutonnieres, corsages (pin-on or wrist), or a custom mix of both—perfect for events of any size.
+  11. Our garlands and wreaths arrive beautifully pre-arranged, making decorating quick and stress-free. Order them as a set or choose a garland or wreath on its own. Each piece is ready to display right out of the box.
+  12. <p><em>Live Floral Design Workshop with Heather Waits</em></p><p></p><p>Unlock your creativity and experience the magic of floral design with our Colorful Meadows DIY Flower Kit. This hands-on workshop is perfect for aspiring florists, event planners, or anyone who simply loves working with fresh flowers.</p><p></p><p>Join our in-house floral expert, Heather Waits, for a live guided session where you'll design three beautiful arrangements—a bridal bouquet, a centerpiece, and a boutonniere. Along the way, you'll pick up expert techniques, insider tips, and even learn how to sell your designs to clients.</p><p></p><p><strong>What's included:</strong></p><p>– Step-by-step guidance from a professional florist</p><p>– Hands-on design of three signature pieces</p><p>– Business-minded insights for selling your work</p><p>– A fun, interactive learning experience</p><p></p><p><strong>Order Deadline:</strong> September 4th, 2025</p><p></p><p><strong>Choose Your Delivery Date:</strong> September 16th or 17th, 2025 - The class will take place on September 18th.</p><p>Once your kit is ordered, we'll send you a prep email with all the details: what tools you'll need, how to care for your blooms, and how to join the live session.</p><p></p><p><strong>Reserve your kit today and bring your floral vision to life.</strong></p>
+  13. no design work needed!
+  14. no designing or assembly required. Each collection includes a coordinating bridal bouquet and boutonniere, handcrafted for effortless elegance on your special day.
+  15. Crafted for elopements, courthouse weddings, and intimate celebrations, our Minimony Wedding Collections feature pre-arranged floral sets that are beautifully coordinated and ready to use. Choose from an elegant bridal bouquet and boutonniere set or upgrade to our intimate package with flowers for your entire small wedding party
+
+Column: attributes.Recipe description
+-------------------------------------
+Basic unique count: 660
+Unique values after splitting by semicolon: 667
+Sample unique split values (15 shown):
+  1. Each bouquet features a harmoniously hand-crafted arrangement of lighthouse & orange crush roses, salmon oefa cremon, garfield ranunculus pon pon, peach carnations, and orange alstroemeria.
+  2. <p>Each centerpiece features a harmoniously hand-crafted arrangement of white rose, tinted pink ombre disbud, pink spray rose, yellow button, yellow daisy, and blue glittered ruscus.</p>
+  3. Each bouquet features a harmoniously hand-crafted arrangement of red carnations.
+  4. Each centerpiece features a harmoniously hand-crafted arrangement of yellow sunflowers, red gerberas, mini green hydrangeas, burgundy carnations, yellow solidago, green dianthus ball, white alstroemeria, and green ruscus.
+  5. Each centerpiece features a harmoniously hand-crafted arrangement of white gerbera daisy, white roses, green chrysanthemum, white spray roses, green hypericum, green amaranthus, green asparagus, green ruscus, hebes, pennycress, dusty miller, and kale.
+  6. Each bouquet features a harmoniously hand-crafted arrangement of yellow alstroemeria, yellow billy balls, green hypericum berries, yellow limonium, bronze cremons, yellow poms, bicolor yellow roses, green
+  7. Each centerpiece features a harmoniously hand-crafted arrangement of Roses, Snapdragon, and Ruscus greens.
+  8. Each bouquet features a harmoniously hand-crafted arrangement of deep lavender garden roses.
+  9. Each bouquet features a harmoniously hand-crafted arrangement of tinted brown garden, tinted brown cremon, tinted brown spray roses, tinted brown solidago, tinted brown pom button, tinted baby eucalyptus, and brown lily grass.
+  10. Each bouquet features a harmoniously hand-crafted arrangement of light pink, lavender, peach, cream, light green, orange, light blue, and yellow tinted roses, as well as baby's breath, and ruscus.
+  11. Each bouquet features a harmoniously hand-crafted arrangement of orange roses, yellow sunflowers, red garden roses, bronze football mums, bronze poms, antique green hydrangeas, orange carthamus, yellow limonium, brown lotus pods, red alstroemerias, and parvifolia eucalyptus.
+  12. Each centerpiece features a harmoniously hand-crafted arrangement of tinted terracota roses, tinted orange rustic cremon, white spray roses, tinted desert orange solidago, tinted burnt orange pom pom, natural orange kangaroo paw, and tinted brown parvifolia eucalyptus.
+  13. Each bouquet features a harmoniously hand-crafted arrangement of red roses, bicolor pink roses, light pink spray roses, red ranunculus, pink delphinium, pink solomio, and ruscus greenery.
+  14. Each centerpiece features a harmoniously hand-crafted arrangement of Yellow Roses, Yellow Gerber Daisies, Ruscus Greenery, Yellow Solidago, and Yellow Billy Balls.
+  15. Each bouquet features a harmoniously hand-crafted arrangement of assorted pastel flowers such as kale, alstromeria, thistle, roses and hydrangeas
+
+Column: attributes.Additional Info 1
+------------------------------------
+Basic unique count: 224
+Unique values after splitting by semicolon: 237
+Sample unique split values (15 shown):
+  1. Our Mixed Pack features an assortment of beautiful Air Plants. The varieties and quantity of each are chosen at the time of preparing your order, based on available inventory.
+  2. Seeded Eucalyptus seeds can be smaller in size, shaped like a cup, or colored brownish/red depending on the time of year.
+  3. <p>Learn how to use the Design Egg Floral Supply Tool by <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=euTEwqq5LO8&amp
+  4. Veronica Flowers have a natural bend. Even when fully hydrated, the bloom may have curvature.
+  5. Statice flowers arrive fully bloomed.
+  6. Choose between Designer or Premium branches for this pack. Designer branches come fuller, with bigger blooms, and can bloom up to 5 days sooner compared to the Standard variety.
+  7. <p>Shedding is completely normal when preparing and handling dried blooms.</p>
+  8. Mango Lassi stems are very delicate. See the Flower Care tab on this page for care and handling instructions.
+  9. Podocarpus has small, fine thorns along its stems, and gloves should be worn while processing this greenery.
+  10. Air Plants are drought tolerant. Please see the Flower Care tab on this page for care instructions.
+  11. Shedding is completely normal when preparing and handling dried blooms.
+  12. Each bag of Rose Petals contains no less than 8 cups and no more than 12 cups, holding 0.61 pounds.
+  13. please leave those on your flowers until ready for arranging. See the Flower Care tab on this page for full care instructions.
+  14. <p>Poppies will arrive with a closed bloom and buds that look like fuzzy pods.&nbsp
+  15. These roses do not come with attached stems, but can be added above for an additional cost.
+
+Column: attributes.Additional Info 2
+------------------------------------
+Basic unique count: 111
+Unique values after splitting by semicolon: 119
+Sample unique split values (15 shown):
+  1. <p><span>Stephanotis flowers are delicate. See the Flower Care tab on this page for instructions on how to care for your flowers.</span></p>
+  2. Podocarpus may feature small red berries depending on the season.
+  3. These flowers come fully bloomed, easy to design and require no special prep work.
+  4. Amaryllis has a long, hollow stem. After cutting, the stems may split at the bottom. This is a normal trait. Please see our Flower Care tab on this page for instructions on how to best care for your Amaryllis.
+  5. Nerine is a bulb flower, and it's common practice to remove the brown guard petal during processing. See the Flower Care tab on this page for full care instructions.
+  6. <p>Shedding is completely normal when preparing and handling dried blooms.</p>
+  7. Air Plants are drought tolerant. Please see the Flower Care tab on this page for care instructions.
+  8. as the flower opens this center color will fade out.
+  9. Podocarpus has small, fine thorns along its stems, and gloves should be worn while processing this greenery.
+  10. Leaves will vary in color, shape and size depending on the time of the year.
+  11. We do not recommend cutting garlands, as this could result in an unraveling or weakening of the structure.
+  12. Peonies will arrive in various stages of bloom, from tight golf ball buds to fully open flowers, and require special care. Please see the Flower Care tab on this page for full care instructions.
+  13. not as potted plants.
+  14. At different times of the year, the seeds on our Seeded Eucalyptus Greenery can be smaller, cup-shaped, or brownish/red. Please contact our customer service if you have any questions about the seed shape or color for your event.
+  15. Each growers bunch in this kit contains approximately a fistful of stems.
+
+Column: attributes.Additional Info 3
+------------------------------------
+Basic unique count: 61
+Unique values after splitting by semicolon: 62
+Sample unique split values (15 shown):
+  1. This product is shipped flat. After processing and hydration, you may gently fluff out the blooms.
+  2. Seeded eucalyptus will vary in shape, color, and size depending on season.
+  3. The Olive berries on these branches may shrivel and will not appear perfectly plump.
+  4. Stephanotis comes in boxes of 25 blooms per box.
+  5. Ninebark branches are extremely delicate and should be handled with care.
+  6. Succulents are hardy but sensitive to cold, and do not require refrigeration. For full care instructions, please refer to the Flower Care tab on this page.
+  7. <p>If you're looking for Orchids with stems in this exact color, check out <a href="https://fiftyflowers.com/products/sky-magenta-orchids">Sky Magenta Orchids</a>.</p>
+  8. <p>Learn how to care for your tropical Ginger flowers by clicking <a href="https://www.youtube.com/watch?v=-sTt5VstOpc&feature=youtu.be" target="_blank">here</a>!</p>
+  9. <p>If you're looking for Orchids with stems in this exact color, check out <a href="https://fiftyflowers.com/products/green-geisha-orchid-flower">Green Geisha Orchid Flower</a>.</p>
+  10. Succulents arrive as fresh cut blooms, not as potted plants.
+  11. <p>Birds of Paradise may arrive closed, with no orange petals visible. If blooms stay hidden or petals begin browning, gently use your thumb or tweezers to pull a petal from the spathe to encourage blooming. You can watch a short video tutorial of this process <a target="_blank" rel="noopener" href="https://www.youtube.com/shorts/tyVy1bEpeFc">here</a>. For full care instructions, see the <u>Flower Care tab</u> on this page.</p>
+  12. <p>If you're looking for Orchids with stems in this exact color, check out <a href="https://fiftyflowers.com/products/lilac-mist-dendrobium-orchids">Lilac Mist Dendrobium Orchids</a>.</p>
+  13. <p>Learn how to attach your preserved roses to faux stems by clicking <a href="https://www.youtube.com/shorts/HLjBzNAIsV4" target="_blank">here</a>.</p>
+  14. The vine leaves spring out to make the garland look fuller.
+  15. We do not recommend cutting garlands, as this could result in an unraveling or weakening of the structure.
+
+Column: attributes.Additional Info 4
+------------------------------------
+Basic unique count: 19
+Unique values after splitting by semicolon: 20
+Sample unique split values (15 shown):
+  1. This garland has a green, woody scent.
+  2. <p>Download our <a href="https://cdn.shopify.com/s/files/1/0516/8968/5154/files/Flower_Bar_-_How_to_Guide.pdf?v=1744649125" target="_blank">Flower Bar How-To Guide</a> for in-depth planning tips, setup instructions, and step-by-step guidance.</p>
+  3. Succulents are hardy but sensitive to cold, and do not require refrigeration. For full care instructions, please refer to the Flower Care tab on this page.
+  4. This garland has a fresh, woody scent.
+  5. Garlands tend to shed. Please see the Flower Care tab on this page for complete details on how to properly care for your garlands.
+  6. As flowers are a natural product of Mother Nature and monitor resolutions can differ, the exact color tones of this flower may vary to some degree.
+  7. We do not recommend cutting garlands, as this could result in an unraveling or weakening of the structure.
+  8. Roses are packed in staggered layers for protection during shipping. From the top angle, it may appear that you only have 12 stems in the bunch
+  9. <p>Dahlias require delicate care. For a similar look with easier maintenance, consider our collection of <a href="https://fiftyflowers.com/collections/daisies-poms" target="_blank">Daisies and Poms</a> or <a href="https://fiftyflowers.com/collections/mums-spider-mums" target="_blank">Mums and Spider Mums</a>!</p>
+  10. Dusty Miller bunches include 10 stems and have a minimum height of 15 inches.
+  11. <p>Check out <a href="https://www.youtube.com/shorts/R0UJS4v2BY8" target="_blank">this video</a> to see us unboxing and hydrating Mini Cymbidiums!</p>
+  12. however, below them is a second layer containing the remaining roses.
+  13. <p><span>Weighted water bags can be added to your arch for an additional cost.</span></p>
+  14. This garland has a fresh, green scent.
+  15. This garland has a fresh, herbal scent.
+
+Column: attributes.Holiday Occasion
+-----------------------------------
+Basic unique count: 414
+Unique values after splitting by semicolon: 21
+Sample unique split values (15 shown):
+  1. Halloween
+  2. Baby Shower
+  3. Wedding
+  4. Sympathy
+  5. New Years
+  6. Hanukkah
+  7. Easter
+  8. Celebration of Life
+  9. Graduation
+  10. Engagement
+  11. Anniversary
+  12. Birthday
+  13. Mother's Day
+  14. Bridal Shower
+  15. 4th of July
+
+Column: attributes.Recipe metafield
+-----------------------------------
+Basic unique count: 883
+Unique values after splitting by semicolon: 115
+Sample unique split values (15 shown):
+  1. Garlands
+  2. Phlox
+  3. Anemone
+  4. Gladiolus
+  5. Asters
+  6. Spray Roses
+  7. Limonium
+  8. Leucadendron
+  9. Gaillardia
+  10. Ruscus
+  11. Branches
+  12. Berries
+  13. Hydrangea
+  14. Milkweed
+  15. Amaryllis
+
+Column: attributes.Focal Recipe
+-------------------------------
+Basic unique count: 205
+Unique values after splitting by semicolon: 23
+Sample unique split values (15 shown):
+  1. Air Plants
+  2. Anthurium
+  3. Anemone
+  4. Garden Roses
+  5. Spray Roses
+  6. Protea
+  7. Gerberas
+  8. Dahlias
+  9. Hydrangea
+  10. Lilies
+  11. Snapdragon
+  12. Carnations
+  13. Succulents
+  14. Peonies
+  15. Ginger
+
+Column: attributes.Line Recipe
+------------------------------
+Basic unique count: 34
+Unique values after splitting by semicolon: 11
+Sample unique split values (11 shown):
+  1. Delphinium
+  2. Lilies
+  3. Snapdragon
+  4. Liatris
+  5. Amaranthus
+  6. Stock Flowers
+  7. Larkspur
+  8. Heather
+  9. Freesia
+  10. Heliconia
+  11. Veronica
+
+Column: attributes.Filler Recipe
+--------------------------------
+Basic unique count: 388
+Unique values after splitting by semicolon: 53
+Sample unique split values (15 shown):
+  1. Football Mums
+  2. Agapanthus
+  3. Daisies & Poms
+  4. Carthamus
+  5. Asters
+  6. Spray Roses
+  7. Limonium
+  8. Yarrow
+  9. Solidago
+  10. Branches
+  11. Berries
+  12. Star of Bethlehem
+  13. Spider Mums
+  14. Cremons
+  15. Marigolds
+
+Column: attributes.Greens Recipe
+--------------------------------
+Basic unique count: 56
+Unique values after splitting by semicolon: 14
+Sample unique split values (14 shown):
+  1. Dusty Miller
+  2. Monstera
+  3. Ruscus
+  4. Bells of Ireland
+  5. Tropical Greenery
+  6. Eucalyptus
+  7. Kale
+  8. Magnolia
+  9. Greenery
+  10. Grasses
+  11. Leucadendron
+  12. Herbs
+  13. Pine
+  14. Bupleurum
+
+Column: attributes.Description
+------------------------------
+Basic unique count: 4705
+Unique values after splitting by semicolon: 5799
+Sample unique split values (15 shown):
+  1. <p>Apple Yellow Peruvian Lilies for your wedding or special event from FiftyFlowers! Also known as Alstroemerias, these Peruvian Lilies feature light pale yellow petals with green hues and dark freckles. A sinlge stem has an average of 3 to 5 semi heart-shaped blooms. Apple Yellow Peruvian Lilies are perfect for bouquets, centerpieces, or floral decor. Shipped fresh from farm at wholesale prices, shipping included!</p>
+<p>
+  2. <p style="0px"><span>This unique Grey Knight Rose is a lavish lavender color that will surely bring an edgy feel to any floral arrangement it is put in or let it ride solo and steal the show with its completely unique and edgy feel! The Grey Knight Rose is sure to be an attention grabber. Order this unique Grey Knight Rose at FiftyFlowers!</span></p>
+  3. <p>Rosita Vendela Antique Pink Roses have stunning blooms. Its' center is classic pink, while the outer petals are cream with hints of green. Pair with vedela ivory roses for a classic look. Offered in quantities small to large, making it easy for you to select the amount you need for your event.</p>
+<p> </p>
+  4. <p>The Soft Anemone Dreams DIY Flower Kit offers a curated collection of soft-toned lavender and white hues, ideal for creating enchanting floral designs. This kit includes a variety of anemones, complemented by an assortment of <a href="https://fiftyflowers.com/collections/greenery">greenery</a>, <a href="https://fiftyflowers.com/collections/hydrangeas">hydrangeas</a>, and <a href="https://fiftyflowers.com/collections/ranunculus">ranunculus</a>. Each delicate bloom, with its layers of petals encircling dark centers, brings a magical and romantic vibe to any space. Perfect for crafting exquisite centerpieces, bridal bouquets, or any arrangement that desires a hint of whimsy and a splash of purple, this DIY kit transforms floral dreams into reality.</p>
+  5. <p>This delightfully colorful bouquet is filed with yellow sunflowers, orange spray roses, red alstroemeria, and purple statice. Its color palette makes for a cheery, joyful arrangement that will warm up the room. Simply place in a vase and enjoy for days to come.</p>
+  6. <p>These fresh blue hydrangea petals are a delightful alternative to traditional rose petals and perfect for your Something Blue. Charm your guests by sprinkling these whimsical petals down the aisle or have your guests use them for the petal toss as you depart for your honeymoon! Offered in three package options, these are handled carefully at the farm before being shipped directly to you.</p>
+  7. feature them at a baby shower, elegant evening  event or classic chic wedding. The 12th wedding anniversary flower,  peonies embody romance and are regarded as a sign of prosperity and  happy marriage. Peonies will look stunning when combined with roses,  lilies and baby's breath or simply elegant arranged on their. A  cherished wedding flower with a sweet scent and perfect color, this  bloom just makes you want to say, "I do."</p>
+  8. <p>Fresh Cut Mother's Day Football Mum Lavender Pink are a beautiful gift for that special person. A light lavender pink flower, this football mum would add a wonderful textural element to a bouquet of our Esther light pink roses for a feminine, monochromatic look. </p>
+  9. <p>These orange with yellow gerrondo flowers have ample blooms that are fuller than the classic gerbera daisy. This flower features a colorful head with stunning orange petals and flecked hints of yellow throughout. These will draw attention to any table centerpiece, wedding bouquet or flower arrangement. FiftyFlowers' Gerrondo Gerberas are known for their award winning premium quality, long lasting vase life, and nearly flawless form.</p>
+  10. <p>Red Tinted Integrafolia serves as wonderful decorative filler that will add height and color to your arrangements. Our foliage is known for its award winning premium quality and long lasting vase life. Use Tinted Integrafolia by itself or combine it with any of our bulk flowers to create unique and romantic wedding bouquets, table centerpieces or flower arrangements. Our greens are shipped fresh directly from our farms to your doorstep. Order online and pay wholesale prices, plus receive free shipping!</p>
+<p>
+  11. <p>These Fresh Cut Pink Straw Flowers are a stunning pink colored flower that would enhance all your blooms. This flower features a button look while also having gorgeous layers of petals that creates texture and dimension. Pair this flower with our <a title="Silver Dollar Eucalyptus Greens" href="https://fiftyflowers.com/products/silver-dollar-eucalyptus-greens"><span style="color: #0000ff
+  12. to tie the pack together, your centerpieces and flower arrangements are sure to astound and delight!</p>
+  13. <p>Dried Canary Grass adds lovely texture to arrangements. Long wispy stems feature a head covered in seeds, appearing like scales. The beige coloring creates both gorgeous contrast and a stunning textural accent. Add these to dried flower arrangements for a cute pop of texture. </p>
+  14. <p>The ranunculus flowers may look delicate, but they pack in an amazing amount of petals that will bloom into an astounding display. These fresh springtime blooms are a fun flower that is available year-round, and will bring that bright new energy into your house. And while they do not contain much of a scent, they will not disappoint with their sheer amount of vibrant colors in every single petal. Watch as they transform from reclusive, tight buds, and into bursting blooms. They love to be bunched together in a cute vase with their heads not too high above the vessel, or put in their own vase to appropriately show off their magnificence all on their own. This farm fresh bunch of ranunculus is guaranteed to bring happiness into your house. </p>
+<p> </p>
+  15. <p>Bring the outdoors in with the touch of fresh blooms for your special day! Simple Garden Fresh Pack features classic white and green hydrangeas, hypericum berries, and green dianthus for a textured floral look! Arrange alone for a classic look using tri-tiered cylinder vases or add in other FiftyFlowers stems like White Ecuadorian Roses for extra volume for gorgeous table arrangements. </p>
+
+Column: attributes.SEO Description
+----------------------------------
+Basic unique count: 2889
+Unique values after splitting by semicolon: 2899
+Sample unique split values (15 shown):
+  1. Vanda Orchids Pink Butterfly are a beautiful and exotic flower, sure to add an elegant touch to any event. With 6-10 blooms per stem, these orchids are perfect for creating stunning arrangements with minimal effort. Trust FiftyFlowers in your flower orders and order with free shipping today!
+  2. Airy, bright, and ethereal, Blue Watercolor Carnation Flowers are perfect focal flowers for wedding bouquets and centerpieces. Shop FiftyFlowers today for all of your DIY Floral needs!
+  3. Elevate your table with the Wildflower Wishes Centerpiece, a prearranged bouquet of elegant white blooms and soft greenery for timeless decor.
+  4. Purpleberry Peruvian Lilies are DIY wedding flowers with 3-5 blooms per stem, making them great for making lusher bridal bouquets and table arrangements. These flowers have a purple and magenta hue that make them both equally beautiful and unique to arrangements.
+  5. Dragonfruit Dendrobium Orchids are a unique blossom that will add an exotic touch to any arrangement or bouquet. With multiple colors from white and pink to red, orchids are an excellent choice for special events like weddings and birthdays. No matter your theme or colors, you'll find everything you need at FiftyFlowers.
+  6. Our Fresh European Cut Peach Roses For Your House are the perfect accompaniment to your living space. Shop peach roses from FiftyFlowers today!
+  7. Tinted Black Ruscus offers a modern, sophisticated touch to floral arrangements with its sleek, dark-tinted leaves. Perfect for adding depth and contrast, this striking greenery enhances event decor, floral designs, or home accents with a bold, dramatic flair.
+  8. Buy wholesale Magenta Hydrangea Flower from FiftyFlowers. A wide selection of quality and fresh bulk Magenta Hydrangea Flower straight from the farm at low prices.
+  9. Discover the exquisite Tissue Culture Statice Medium Pink Flower, a versatile bloom ideal for any occasion. Cultivated through tissue culture, this flower ensures consistent quality and availability throughout the year. Explore and purchase these stunning flowers today at FiftyFlowers.
+  10. The Farm Choice Colorful Rose Bouquet features a vibrant mix of red, yellow, pink, and orange roses, perfect for celebrating love, joy, and special occasions.
+  11. This DIY flower kit is full of filler flowers that have been dried and bleached. Create beautiful centerpieces or use as accents in your fresh flower arrangements! Buy bulk flowers online from FiftyFlowers, the flower delivery experts.
+  12. Chili Pepper Wholesale Fall Greens will make your fall wedding decor stand out. Use these bulk greens alone on tables, or pair with red roses. Shop now.
+  13. Buy fresh Garden Rose Petals to add an incredibly romantic touch to any special occasion. Prepped directly at our farms and shipped to your arms, our bulk packages are offered at wholesale pricing. FiftyFlowers is the trusted online flower expert with award-winning customer service. Freshness is guaranteed!
+  14. Mother's Day Celebration Flower Gift Bouquets are full of cheerful peach and pink daisies, lavender and pink roses, pink spray roses, and eucalyptus. Perfect for gifting, celebrating your mom, or just for you!
+  15. If you are looking for that blush rose touch to add to your bouquet, or just want blush spray roses for home decor, La Vie en Blush Spray Roses are perfect!
+
+Column: attributes.Product Type
+-------------------------------
+Basic unique count: 213
+Unique values after splitting by semicolon: 206
+Sample unique split values (15 shown):
+  1. Blooms
+  2. Phlox
+  3. Arrangements
+  4. Cutters & Shears
+  5. Football Mums
+  6. Double
+  7. Dried Palms
+  8. Gloriosa
+  9. Hanging
+  10. Fresh Hydrangea Petals
+  11. Gaillardia
+  12. Spray Roses
+  13. Fresh Rose Petals
+  14. Leucadendron
+  15. Jumbo
+
+Column: attributes.Product Type - All Flowers
+---------------------------------------------
+Basic unique count: 25
+Unique values after splitting by semicolon: 20
+Sample unique split values (15 shown):
+  1. Garlands
+  2. Line Flowers
+  3. Blooms
+  4. Arrangements
+  5. Centerpieces
+  6. Bouquet Bar
+  7. Wedding Collections
+  8. Bridal Bouquets
+  9. Petals
+  10. DIY Flower Design Class Kits
+  11. Subscription Boxes
+  12. Floral Supplies
+  13. Filler Flowers
+  14. Bouts & Corsages
+  15. Greenery
+
+Column: attributes.Seasonality
+------------------------------
+Basic unique count: 15
+Unique values after splitting by semicolon: 4
+Sample unique split values (4 shown):
+  1. Spring
+  2. Winter
+  3. Summer
+  4. Fall
+
+Column: attributes.Shopify Tags
+-------------------------------
+Basic unique count: 4599
+Unique values after splitting by semicolon: 5080
+Sample unique split values (15 shown):
+  1. ProductId_8083
+  2. ProductId_610
+  3. ProductId_7892
+  4. ProductId_2553
+  5. ProductId_5471
+  6. ProductId_11307
+  7. ProductId_2082
+  8. ProductId_8091
+  9. ProductId_1596
+  10. ProductId_4367
+  11. ProductId_7003
+  12. ProductId_10097
+  13. ProductId_2586
+  14. Asclepia
+  15. ProductId_217
+
+Column: attributes.Recipe Details
+---------------------------------
+Basic unique count: 390
+Unique values after splitting by semicolon: 401
+Sample unique split values (15 shown):
+  1. This DIY Flower Kit features growers bunches of a vibrant mix of varied color tulips.
+  2. <ul>
+  <li><strong>Bridal Bouquet features:</strong> 40 stems total, featuring a mix of dark pink garden roses, pink garden roses, mini sunflowers, medium sunflowers, purple mini calla lilies, burgundy mini calla lilies, orange mini calla lilies, red leucadendron, baby eucalyptus, gunnii eucalyptus, silver dollar eucalyptus, pink charmelia, poms, bronze disbuds, and cream roses.</li>
+  <li><strong>Bridesmaid Bouquets feature:</strong> 30 stems per bouquet, featuring a mix of dark pink garden roses, pink garden roses, mini sunflowers, medium sunflowers, purple mini calla lilies, orange mini calla lilies, red leucadendron, baby eucalyptus, gunnii eucalyptus, silver dollar eucalyptus, pink charmelia, poms, and bronze disbuds.</li>
+  <li><strong>Boutonnieres feature:</strong> 4 stems per boutonniere, featuring a mix of Mini sunflowers, gunnii eucalyptus, silver dollar eucalyptus, and pink charmelia.</li>
+  <li><strong>Pin-On Corsages feature:</strong> 5 stems per corsage, featuring a mix of Mini sunflowers, gunnii eucalyptus, orange mini calla lilies, silver dollar eucalyptus, and pink charmelia.</li>
+  <li><strong>Wrist Corsages feature:</strong> 5 stems per corsage, featuring a mix of yellow mini sunflowers, gunnii eucalyptus, silver dollar eucalyptus, pink charmeila, and poms.</li>
+  <li><strong>Pre-Arranged Centerpieces feature:</strong> 32 stems per centerpiece, featuring a mix of dark pink garden roses, pink garden roses, mini sunflowers, medium sunflowers, purple mini calla lilies, baby eucalyptus, gunnii eucalyptus, silver dollar eucalyptus, orange mini calla lilies, pink charmelia, poms, and bronze disbuds.</li>
+  <li><strong>DIY Centerpieces feature:</strong> 20 stems per centerpiece (not pre-arranged), featuring a mix of dark pink garden roses, pink garden roses, mini sunflowers, medium sunflowers, purple mini calla lilies, leucadendron, baby eucalyptus, gunnii eucalyptus, silver dollar eucalyptus, and pink charmelia.</li>
+  <li><strong>DIY Garlands feature:</strong> 60 stems per garland (120 stems total, not pre-arranged), featuring a mix of dark pink garden roses, medium sunflowers, purple mini calla lilies, red leucadendron, baby eucalyptus, gunnii eucalyptus, silver dollar eucalyptus, pink charmelia, and poms.</li>
+  <li><strong>DIY Arch feature:</strong> 64 stems total (not pre-arranged), featuring a mix of dark pink garden roses, yellow mini sunflowers, purple mini callas, gunnii eucalyptus, silver dollar eucalyptus, pink charmeila, poms, bronze disbud, leather leaf, and cocculus.</li>
+  <li><strong>Flower Crowns feature:</strong> 18 stems total, featuring a mix of yellow mini sunflowers, gunnii eucalyptus, silver dollar eucalyptus, pink charmeila, white limonium.</li>
+  <li><strong>Aisle Markers feature:</strong> 12 stems per marker, featuring a mix of dark pink garden roses, pink garden roses, yellow sunflowers, purple mini calla lilies, orange mini calla lilies, red leucadendron,  gunnii eucalyptus, silver dollar eucalyptus, pink charmeila, poms and bronze disbuds.</li>
+  <li><strong>Cake Flowers feature:</strong> 16 stems total, featuring a mix of dark pink garden roses, medium sunflowers, gunnii eucalyptus, silver dollar eucalyptus, and pink charmelia.</li>
+</ul>
+  3. This DIY Flower Kit features growers bunches of pink protea, red pincushion, safari leucadendron, silver dollar eucalypus, purple evergreen sprigs, and tea tree myrtle.
+  4. This DIY Greenery Kit features 3 unique growers bunches of farm-selected winter greenery such as white pine, ming juniper, and leyland cedar, and more.
+  5. <p>This DIY Flower Kit features growers bunches of pink rose, pink carnation, green mini hydrangea, tinted blue daisies, pink dianthus, white poms, baby eucalyptus, and green ruscus.</p>
+  6. This DIY Flower Kit features growers bunches of light blue hydrangeas, white spray roses, white cremons, blue delphinium, and green pittosporum.
+  7. This DIY Flower Kit features growers bunches of Daisies, Cushion Poms, and Novelty Poms.
+  8. This DIY Flower Kit features growers bunches of magnolia, cattails, curly willow tips, scabiosa pods, jester leucadendron, safflower, dusty miller, and bay leaf.
+  9. <ul>
+  <li><strong>Bridal Bouquet features:</strong> 32 stems total, featuring a mix of white calla lilies, dusty miller lacy leaf, silver dollar eucalyptus, white garden roses, white hydrangeas, and white roses.</li>
+  <li><strong>Bridesmaid Bouquets feature:</strong> 20 stems per bouquet, featuring a mix of white calla lilies, baby eucalyptus, silver dollar eucalyptus, white garden roses, white hydrangeas, and white roses.</li>
+  <li><strong>Boutonnieres feature:</strong> 3 stems per boutonniere, featuring a mix of White alstroemeria, dusty miller lacy leaf, and baby eucalyptus.</li>
+  <li><strong>Pin-On Corsages feature:</strong> 3 stems per corsage, featuring a mix of White alstroemeria, dusty miller lacy leaf, and baby eucalyptus.</li>
+  <li><strong>Wrist Corsages feature:</strong> 5 stems per corsage, featuring a mix of gunnii eucalyptus and white spray roses.</li>
+  <li><strong>Pre-Arranged Centerpieces feature:</strong> 35 stems per centerpiece, featuring a mix of white calla lilies, baby eucalyptus, silver dollar eucalyptus, white garden roses, white hydrangeas, and white roses.</li>
+  <li><strong>DIY Centerpieces feature:</strong> 20 stems per centerpiece (not prearranged), featuring a mix of white calla lilies, white alstroemerias, dusty miller lacy leaf, baby eucalyptus, silver dollar eucalyptus, white garden roses, white hydrangeas, and white roses.</li>
+  <li><strong>DIY Garlands feature:</strong> 56 stems per garland (112 stems total, not prearranged), featuring a mix of baby eucalyptus, silver dollar eucalyptus, gunnii eucalyptus, white garden roses, white hydrangeas, and white roses.</li>
+  <li><strong>DIY Arch features:</strong> 59 stems total (not prearranged), featuring a mix of baby blue eucalyptus, silver dollar eucalyptus, gunnii eucalyptus, white garden roses, white hydrangeas, white roses, leather leaf, and ruscus.</li>
+  <li><strong>Flower Crowns feature:</strong> 18 stems total, featuring a mix of white alstroemerias, silver dollar eucalyptus, gunnii eucalyptus, white roses, and white limonium. </li>
+  <li><strong>Aisle Markers feature:</strong> 12 stems per marker, featuring a mix of white calla lilies, silver dollar eucalyptus, gunnii eucalyptus, white garden roses, and white roses.</li>
+  <li><strong>Cake Flowers feature:</strong> 16 stems total, featuring a mix of baby eucalyptus, silver dollar eucalyptus, gunni eucalyptus, white garden roses, white hydrangeas, white roses, and limonium.</li>
+</ul>
+  10. This DIY Flower Kit features growers bunches of Musas, helcionia, and farm choice foliage.
+  11. This DIY Flower Kit features growers bunches of peach garden roses, lavender scabiosa, peach ranunculus, tinted peach hydrangeas, peach mini carnations, salmon sweet pea, lavender sweet pea, baby pink sweet pea, lavender delphinium, peach stock, and green hanging amaranthus.
+  12. <ul>
+  <li><strong>Bridal Bouquet Features:</strong> 48 total stems of white garden roses, green dianthus, baby eucalyptus, gunnii eucalyptus, silver dollar eucalyptus, white charmelia, green carnation, white snapdragon, succulent, bells of ireland, cream rose, white poms, and tree fern.</li>
+  <li><strong>Bridesmaid Bouquets Feature:</strong> 30 total stems of white garden roses, baby eucalyptus, gunnii eucalyptus, silver dollar eucalyptus, white charmelia, green carnation, white snapdragon, bells of ireland, cream rose, white poms, and tree fern.</li>
+  <li><strong>Boutonnieres Feature:</strong> Gunnii eucalyptus, silver dollar eucalyptus, white charmelia, white spray rose, and white poms.</li>
+  <li><strong>Pin-On Corsages Feature:</strong> Gunnii eucalyptus, silver dollar eucalyptus, white charmelia, white spray rose, and white poms.</li>
+</ul>
+  13. This DIY Flower Kit features growers bunches of sahara sensation & mayra peach garden roses, shimmer peach & pink mondial roses, peach spray roses, peach hypericum berries, peach carnations, peach stock, green brillantina, baby eucalyptus, and leather leaf.
+  14. This DIY Flower Kit features growers bunches of Gerbera Daisies, Limonium, Daisies, and Snapdragons OR Stock.
+  15. This Flower Bar Kit features growers bunches of light lavender roses, pink ranunculus, pink mini carnations, pink solomio, blush delphinium, and baby blue eucalyptus.
+
+Column: attributes.Bouquet Recipe
+---------------------------------
+Basic unique count: 88
+Unique values after splitting by semicolon: 89
+Sample unique split values (15 shown):
+  1. <p><strong>Suggested Flower Recipe For One Bouquet:</strong> 1 light pink garden rose, 1 tabatha rose, 1 white spray rose or hot pink spray roses, 1 light pink carnation, 1 white gypsophilia, 1 pink tint solidago, 1 hot pink alstroemeria or pink candy rose, 1 baby eucalyptus or green leather leaf.</p>
+  2. <p><strong>Suggested Flower Recipe For One Bouquet:</strong> 1 white roses, 1 tinted gold cremon, 1 white stock, 1 tinted black pom cushion, 1 tinted silver billy balls, 1 tinted black billy balls, 1 tinted silver thistle, and 1 tinted gold ruscus.</p>
+  3. <p><strong>Suggested Flower Recipe For One Bouquet:</strong> 1 white rose or 1 white kale or 1 football mum, 1 white spray roses or white mini calla, 1 white aster or 1 white solomio, 1 white hypericum, and 2 greenery.</p>
+  4. <p><strong>Suggested Flower Recipe For One Bouquet:</strong> 1 bromo roses, 1 explorer roses, 1 fortune rose, 1 red ranunculus or velvet carnation, 1 burgundy astrantia and 1 hebes.</p>
+  5. <p><strong>Suggested Flower Recipe For One Bouquet:</strong> 1 art deco or lola roses, 1 la habana roses, 1 hot pink ranunculus, 1 elva spray roses, 1 imre solomio, 1 pink veronica, and 1 baby eucalyptus.</p>
+  6. <p><strong>Suggested Flower Recipe For One Bouquet:</strong> 1 light blue carnation, 1 dark blue carnations, 1 sprayed blue spray rose, 1 tinted blue babys breath, 1 white veronica, 1 blue delphinium and 1 baby eucalyptus.</p>
+  7. white poms, 1 dark blue glittered thistle, 1 tinted purple solidago, 1 holographic purple ruscus, and 1 tinted blue pennycress.</p>
+  8. <p><strong>Suggested Flower Recipe For One Bouquet:</strong> 1 white with red tips, 1 white carnation, 1 pink spray rose, 1 white baby's breath, 1 metallic pink ruscus, and 1 red billy balls.</p>
+  9. <p><strong>Suggested Flower Recipe For One Bouquet:</strong> 1 white cremons, 1 white roses, 1 white carnations, 1 baby's breath, 1 silver thistle, 1 white button poms, 1 white lepidium, 1 green israeli ruscus, 1 silver israeli ruscus, and 1 gold billy balls.</p>
+  10. <p><strong>Suggested Flower Recipe For One Bouquet:</strong> 1 orange rose, 1 yellow sunflower, 1 red garden rose, 1 bronze football mum, 1 bronze pom, 1 yellow limonium, 1 brown lotus pod, 1 red alstroemeria, and 1 parvifolia eucalyptus.</p>
+  11. <p><strong>Suggested Flower Recipe For One Bouquet:</strong> 1 violet purple aster, 1 purple passion alstroemeria, 1 purple limonium, 1 pink aster, and 1 purple delphinium.</p>
+  12. <p><strong>Suggested Flower Recipe For One Bouquet:</strong> 1 mayra rose, 1 hot pink gerbera, 1 hot pink ranunculus, 1 hot pink dianthus, 1 hot pink freesia, 1 hot pink craspedia, and 1 pink snapdragons.</p>
+  13. <p><strong>Suggested Flower Recipe For One Bouquet:</strong> 1 champagne ranunculus, 1 candlelight rose, 1 white scabiosa, 1 white sweet peas, 1 pale yellow butterfly ranunculus, and 1 white delphinium.</p>
+  14. <p><strong>Suggested Flower Recipe For One Bouquet:</strong> 1 green carnation, 1 green rose, 1 mini hydrangea, 1 green trick dianthus, 1 green hypericum, 1 green buttons, 1 green spray rose, and 1 green glittered ruscus.</p>
+  15. <p><strong>Suggested Flower Recipe For One Bouquet:</strong> 1 tinted red cremon, 1 red rose, 1 white rose, 1 red mini carnation, 1 white mini carnation, 1 red glittered billy ball, 1 white glittered swirls, and 1 tinted red baby eucalyptus.</p>
+
+Column: attributes.Related Product
+----------------------------------
+Basic unique count: 284
+Unique values after splitting by semicolon: 287
+Sample unique split values (15 shown):
+  1. <p>Looking for a more interactive experience with the same flower recipe? Our <a href="https://fiftyflowers.com/products/yellow-fuzzy-rose-bouquet-bar-kit">Yellow Fuzzy Rose Bouquet Bar Flower Kit</a> is designed for guests to create and take home their own bouquets! Available in three sizes, it's perfect for everything from intimate gatherings to larger celebrations.</p>
+  2. <p>Looking for a ready-made centerpiece with the same recipe? Our <a href="https://fiftyflowers.com/products/coastal-vibes-flower-centerpiece">Coastal Vibes Flower Centerpiece</a> arrives beautifully pre-arranged, making setup effortless and stress-free. Just trim the stems, place them in your favorite vases, and enjoy the stunning results!</p>
+  3. <p>Looking for ready-made centerpieces with the same recipe? Our <a rel="noopener" href="https://fiftyflowers.com/products/holographic-purple-flower-centerpieces">Holographic Purple Flower Centerpiece</a> arrives beautifully pre-arranged, making setup effortless and stress-free. Just trim the stems, place them in your favorite vases, and enjoy the stunning results!</p>
+  4. <p>Looking for a more interactive experience with the same flower recipe? Our <a href="https://fiftyflowers.com/products/haunted-halloween-flower-bouquet-bar-kit">Haunted Halloween Flower Bouquet Bar Kit</a> is designed for guests to create and take home their own bouquets! Available in three sizes, it's perfect for everything from intimate gatherings to larger celebrations.</p>
+  5. <p>Looking for a more interactive experience with the same flower recipe? Our <a href="https://fiftyflowers.com/products/sunny-fuzzy-flower-bouquet-bar">Sunny Fuzzy Flower Bouquet Bar Kit</a> is designed for guests to create and take home their own bouquets! Available in three sizes, it's perfect for everything from intimate gatherings to larger celebrations.</p>
+  6. <p><strong>Love This Look?</strong> <a target="_blank" rel="noopener" class="c-link" href="https://fiftyflowers.com/pages/farms-to-arms/fresh-off-the-market-flower-collection"><u>Shop the entire line</u></a> of Fresh Off The Market Centerpieces, DIY Flower Kits, Flower Bars, and Bouquets with the same recipe!</p>
+  7. <p><strong>Love This Look?</strong> <a target="_blank" rel="noopener" class="c-link" href="https://fiftyflowers.com/pages/farms-to-arms/shades-of-purple-flower-collection"><u>Shop the entire line</u></a> of Shades Of Purple Centerpieces, DIY Flower Kits, Flower Bars, and Bouquets with the same recipe!</p>
+  8. <p><strong>Love This Look?</strong> <a target="_blank" rel="noopener" class="c-link" href="https://fiftyflowers.com/pages/farms-to-arms/cupids-flirty-pink-flower-collection"><u>Shop the entire line</u></a> of Cupid's Flirty Pink Centerpieces, DIY Flower Kits, Flower Bars, and Bouquets with the same recipe!</p>
+  9. <p>Looking for a ready-made centerpiece with the same recipe? Our <a rel="noopener" href="https://fiftyflowers.com/products/lucky-in-love-flower-centerpieces-1">Lucky In Love Flower Centerpiece</a> arrives beautifully pre-arranged, making setup effortless and stress-free. Just trim the stems, place them in your favorite vases, and enjoy the stunning results!</p>
+  10. <p>Looking for a ready-made centerpiece with the same recipe? Our <a rel="noopener" href="https://fiftyflowers.com/products/holographic-purple-flower-centerpieces">Holographic Purple Flower Centerpiece</a> arrives beautifully pre-arranged, making setup effortless and stress-free. Just trim the stems, place them in your favorite vases, and enjoy the stunning results!</p>
+  11. Berries Flower Centerpieces</a> arrives beautifully pre-arranged, making setup effortless and stress-free. Just trim the stems, place them in your favorite vases, and enjoy the stunning results!</p>
+  12. <p>Looking for ready-made centerpieces with the same recipe? Our <a href="https://fiftyflowers.com/products/orange-crush-rose-luxury-flower-centerpieces">Orange Harvest Flower Centerpiece</a> arrives beautifully pre-arranged, making setup effortless and stress-free. Just trim the stems, place them in your favorite vases, and enjoy the stunning results!</p>
+  13. <p>Looking for a ready-made centerpiece with the same recipe? Our <a href="https://fiftyflowers.com/products/crimson-fire-statement-centerpiece">Crimson Fire Statement Centerpiece</a> arrives beautifully pre-arranged, making setup effortless and stress-free. Just trim the stems, place them in your favorite vases, and enjoy the stunning results!</p>
+  14. <p>Looking for a ready-made centerpiece with the same recipe? Our <a href="https://fiftyflowers.com/products/blue-magic-flower-centerpiece">Blue Magic Flower Centerpiece</a> arrives beautifully pre-arranged, making setup effortless and stress-free. Just trim the stems, place them in your favorite vases, and enjoy the stunning results!</p>
+  15. <p>For a slightly more hands-on approach to creating stunning floral designs, check out our <a href="https://fiftyflowers.com/products/modern-sunflower-diy-flower-kit">Modern Sunflower DIY Flower Kit</a>. Featuring the same beautiful flower recipe, this DIY Flower Kit provides all the floral ingredients you need to craft your own unique arrangements. Available in three pack sizes, it's perfect for occasions and events of any size.</p>
+
+Column: attributes.Scent
+------------------------
+Basic unique count: 116
+Unique values after splitting by semicolon: 174
+Sample unique split values (15 shown):
+  1. Sweet, herbaceous, and slightly woody fragrance with subtle floral notes
+  2. Fragrance ranges from sweet and fruity to nearly fragrance-free depending on the variety.
+  3. Rich, sweet, and intensely floral with a fruity, citrus-like edge.
+  4. generally faint and only noticeable up close.
+  5. typically moderate in intensity and more noticeable in warm conditions.
+  6. Sweet, delicate fragrance with light floral and mildly honeyed notes.
+  7. Mild, earthy, and slightly herbal fragrance with a hint of woodiness
+  8. Nearly scentless to light and fruity, with some varieties offering a stronger, spicy, or earthy aroma.
+  9. Subtle, earthy, or slightly nutty aroma
+  10. Typically has a very mild, slightly earthy scent—though fragrance may vary slightly depending on variety.
+  11. Light, delicate and sweet fragrance reminiscent of lilac
+  12. generally moderate in intensity.
+  13. however, commercially grown varieties may have little to no fragrance.
+  14. generally mild. May emit an onion-like scent when cut or crushed.
+  15. Sweet, floral fragrance with honey-like or vanilla undertones
+
+Column: attributes.Recipe Kit - Ready To Go
+-------------------------------------------
+Basic unique count: 24
+Unique values after splitting by semicolon: 42
+Sample unique split values (15 shown):
+  1. Gardenias
+  2. Delphinium
+  3. Anemone
+  4. Daisies & Poms
+  5. Amaranthus
+  6. Larkspur
+  7. Asters
+  8. Spray Roses
+  9. Leucadendron
+  10. Protea
+  11. Freesia
+  12. Solidago
+  13. Branches
+  14. Berries
+  15. Dahlias
+
+Column: attributes.Supplies Product Type
+----------------------------------------
+Basic unique count: 21
+Unique values after splitting by semicolon: 18
+Sample unique split values (15 shown):
+  1. Dishes & Trays
+  2. Trays
+  3. Bowls & Compotes
+  4. Pedestal Foams
+  5. Spheres
+  6. Other
+  7. Cages & Holders
+  8. Wreaths
+  9. Rings
+  10. Pots & Planters
+  11. Bud Vases
+  12. Vases
+  13. Compotes
+  14. Other Foams
+  15. Buckets
+
+Column: attributes.Open Text 1
+------------------------------
+Basic unique count: 212
+Unique values after splitting by semicolon: 233
+Sample unique split values (15 shown):
+  1. <ul>
+<li>This pack includes 1,000 light green 4.25-inch polystyrene water picks with matching green caps.</li>
+<li>Double anchor tip offers added stability when inserted into foam or Styrofoam.</li>
+<li>Designed for use with fresh flowers.</li>
+<li>Guaranteed genuine LOMEY professional grade floral product, shipped directly from the OASIS warehouse.</li>
+</ul>
+  2. <p>These trays are made of high quality <strong>plastic</strong>.</p>
+
+<p>
+Looking for fresh flower designs to coordinate with these trays? Check out our <a href="https://fiftyflowers.com/collections/wholesale-centerpieces">Centerpiece</a> collection or our <a href="https://fiftyflowers.com/collections/diy-flower-combos">DIY Flower Kits</a>.
+</p>
+
+<br>
+<p><strong><u>Black Small Design Tray</u></strong></p>
+<ul>
+<li><strong>Tray Height:</strong> 1 3/4 inches</li>
+<li><strong>Tray Width:</strong> 6 inches</li>
+<li><strong>Inner Opening Diameter:</strong> 6 inches</li>
+<li>Designed to use with our small centerpiece arrangements.</li>
+</ul>
+
+<br>
+<p><strong><u>Black Medium Design Tray</u></strong></p>
+<ul>
+<li><strong>Tray Height:</strong> 1 3/4 inches</li>
+<li><strong>Tray Width:</strong> 7 1/4 inches</li>
+<li><strong>Inner Opening Diameter:</strong> 7 1/4 inches</li>
+<li>Designed to use with our medium centerpiece arrangements.</li>
+</ul>
+
+<br>
+<p><strong><u>Black Large Design Tray</u></strong></p>
+<ul>
+<li><strong>Tray Height:</strong> 1 3/4 inches</li>
+<li><strong>Tray Width:</strong> 10 4/8 inches</li>
+<li><strong>Inner Opening Diameter:</strong> 10 4/8 inches</li>
+<li>Designed to use with our large centerpiece arrangements.</li>
+</ul>
+  3. <ul>
+<li>This package features 10 single strung leis, with your choice of one color option.</li>
+<li>Leis are made with Dendrobium Orchids. Some colors are tinted. Tinted colors usually do not rub off onto clothing, but natural shades like purple or Bombay may bleed and stain, especially when wet.</li>
+<li><strong>Single Strung Leis</strong> are strung head-to-foot, with the string passing through the center of each bloom and all flowers facing the same direction.</li>
+<li>Average lei length is 20 inches.</li>
+<li>Broad tropical leaves may be included for free with your leis.</li>
+<li>With proper care and handling, leis typically last an average of 5 days.</li>
+</ul>
+  4. <ul>
+<li>Choose between the 8 oz. can with applicator bottle or the 39gm tube (smaller item in the picture).</li>
+<li>Fast-drying and waterproof liquid adhesive formulated for use with fresh flowers.</li>
+<li>Bonds quickly, safely and easily.</li>
+<li>Provides a time-saving alternative to wiring and taping, especially with corsages.</li>
+<li>Special formulation will not brown fresh flower petals.</li>
+<li>Holds in cold conditions.</li>
+<li>Guaranteed genuine OASIS professional grade floral product.</li>
+</ul>
+  5. <p>This flower vase is made of high florist grade professional <strong>glass</strong>.</p>
+
+<p>
+Looking for fresh flower designs to coordinate with these vases? Check out our <a href="https://fiftyflowers.com/collections/wholesale-centerpieces">Centerpiece</a> collection or our <a href="https://fiftyflowers.com/collections/diy-flower-combos">DIY Flower Kits</a>.
+</p>
+
+<p>These High Glass Clear Bud Vases are perfect for our Mini size centerpieces.</p>
+
+<br>
+<p><strong><u>High Glass Bud Vase X-Small</u></strong></p>
+<ul>
+<li><strong>Vase Height:</strong> 4 inches</li>
+<li><strong>Vase Width:</strong> 3 inches</li>
+<li><strong>Inner Opening Diameter:</strong> .25 inches</li>
+</ul>
+
+<br>
+<p><strong><u>High Glass Bud Vase Small</u></strong></p>
+<ul>
+<li><strong>Vase Height:</strong> 4.5 inches</li>
+<li><strong>Vase Width:</strong> 3 inches</li>
+<li><strong>Inner Opening Diameter:</strong> .25 inches</li>
+</ul>
+
+<br>
+<p><strong><u>High Glass Bud Vase Medium</u></strong></p>
+<ul>
+<li><strong>Vase Height:</strong> 3 inches</li>
+<li><strong>Vase Width:</strong> 6 inches</li>
+<li><strong>Inner Opening Diameter:</strong> .25 inches</li>
+</ul>
+
+<br>
+<p><strong><u>High Glass Bud Vase Medium</u></strong></p>
+<ul>
+<li><strong>Vase Height:</strong> 8 inches</li>
+<li><strong>Vase Width:</strong> 3.5 inches</li>
+<li><strong>Inner Opening Diameter:</strong> .25 inches</li>
+</ul>
+  6. <ul>
+<li>5.5 inches long x 4 inches wide x 2 inches high
+  7. <ul>
+<li>Wire Cutter measures 7.25 inches long, with a 0.75 inch mouth opening.</li>
+<li>Made with high quality stainless steel construction for increased durability, designed for years of lasting performance.</li>
+<li>Soft-sided, slip resistant handle.</li>
+<li>Perfect for use with fresh flowers.</li>
+<li>Guaranteed genuine OASIS professional grade floral product.</li>
+</ul>
+  8. <p>This DIY flower kit comes with all design pieces you'll need to create your fresh flower arrangement! Once your purchase is complete, you'll receive a link to watch a pre-recorded professional design class hosted by Steven Santos, AIFD who will share his exclusive design tips in flower arranging to help your creativity bloom!</p>
+
+<ul>
+  <li><strong>DIY Flower Kit will include:</strong> Lots of fun flowers for you to design with including pink lilies, white mini callas, white cremons, pink alstroemeria, pink dianthus, pink baby's breath, dusty miller, and pink mayra rose.</li>
+  <li><strong>Supply Kit will include:</strong> Holly Chapel compote and pillow, clear tape, and glue dots.</li>
+  <li>A video tutorial link will be shared with you via email/text giving you access to professional design instruction from Steven Santos, AFID accredited.</li>
+  <li>Expected vase life is an average of 8 days with proper care and handling. Average vase life may vary with each flower type.</li>
+  <li>Flowers are a product of Mother Nature, and due to variation in monitor resolutions, the exact color tones of flowers may vary to some degree.</li>
+</ul>
+
+<p><strong>Online Flower Class:</strong></p>
+<p>Watch our <a href="https://www.youtube.com/watch?v=zJ407GGke9c" target="_blank">Pink Frosting Design Live</a></p>
+
+<p><strong>Want to make it a friends and family design party?</strong> Reach out to us at <strong>877-507-6737</strong> to schedule your own virtual private class.</p>
+  9. <p><strong>Our Premium Rose Subscription Box brings luxurious, high-quality roses from South America's highlands directly to your door! Select from weekly, every other week, or monthly delivery to enjoy fresh roses as often as you'd like, with the freedom to cancel anytime.</strong></p>
+
+<ul>
+<li>Your first delivery will arrive 7 days after your initial order date. If this falls on a weekend, your flowers will be delivered the following Monday.</li>
+<li>While we cannot accommodate custom requests, each box features an expertly curated, designer-quality bouquet crafted by skilled floral designers to bring you an arrangement we know you'll love.</li>
+</ul>
+
+<p><u>Please see the Flower Care tab above for detailed instructions on how to care for your roses!</u></p>
+
+<p><em>*As these are natural products, flowers included in FiftyFlowers designs may occasionally be substituted for similar blooms that maintain a consistent style and color palette, ensuring the high quality expected from our floral designs.</em></p>
+  10. <p>This DIY flower kit comes with all design pieces you'll need to create your fresh flower arrangement! Once your purchase is complete, you'll receive a link to watch a pre-recorded professional design class hosted by Steven Santos, AIFD who will share his exclusive design tips in flower arranging to help your creativity bloom!</p>
+
+<ul>
+  <li><strong>DIY Flower Kit will include:</strong> Lots of fun flowers for you to design with including blue agapanthus, white cushion poms, purple matsumotos, purple limonium, yellow cremons, white roses, leather, aralia, and gunni eucalyptus.</li>
+  <li><strong>Supply Kit will include:</strong> Holly Chapel compote and pillow, clear tape, and glue dots.</li>
+  <li>A video tutorial link will be shared with you via email/text giving you access to professional design instruction from Steven Santos, AFID accredited.</li>
+  <li>Expected vase life is an average of 8 days with proper care and handling. Average vase life may vary with each flower type.</li>
+  <li>Flowers are a product of Mother Nature, and due to variation in monitor resolutions, the exact color tones of flowers may vary to some degree.</li>
+</ul>
+
+<p><strong>Online Flower Class:</strong></p>
+<p>Watch our <a href="https://www.youtube.com/watch?v=7NVwKek-zPc" target="_blank">Sea Breeze Design Live</a></p>
+
+<p><strong>Want to make it a friends and family design party?</strong> Reach out to us at <strong>877-507-6737</strong> to schedule your own virtual private class.</p>
+  11. <p><strong>Our Flower Arrangement Subscription Box brings expertly curated flower bouquets directly from the farm to your door! With prepaid options available in 3, 6, or 12-month durations, you pay just once upfront and enjoy the convenience of regular deliveries without ever having to worry about recurring billing.</strong></p>
+
+<ul>
+<li>Your first delivery will arrive 7 days after your initial order date. If this falls on a weekend, your flowers will be delivered the following Monday.</li>
+<li>While we cannot accommodate custom requests, each box features an expertly curated, designer-quality bouquet crafted by skilled floral designers to bring you an arrangement we know you'll love.</li>
+</ul>
+
+<p><u>Please see the Flower Care tab above for detailed instructions on how to care for your bouquet!</u></p>
+
+<p><em>*As these are natural products, flowers included in FiftyFlowers designs may occasionally be substituted for similar blooms that maintain a consistent style and color palette, ensuring the high quality expected from our floral designs.</em></p>
+  12. <ul>
+<li>Sturdy, high-quality polypropylene.</li>
+<li>13 inches high and 10-1/2 inches deep.</li>
+<li>6 per case.</li>
+<li>Buckets stand on their own in a cooler or as part of a display.</li>
+<li>For use with fresh flowers.</li>
+<li>Guaranteed genuine OASIS professional grade floral product shipped directly from Smithers OASIS warehouse.</li>
+</ul>
+  13. <ul>
+<li>18 inches wide x 150 ft. roll.</li>
+<li>Steel wire mesh with hexagonal gaps.</li>
+<li>Creates an instant grid for designing.</li>
+<li>Holds flowers securely in place during transport.</li>
+<li>For use with fresh flowers.</li>
+<li>Guaranteed genuine OASIS professional grade floral product.</li>
+</ul>
+  14. <p>This flower vase is made of high florist grade professional <strong>ceramic</strong>.</p>
+
+<p>
+Looking for fresh flower designs to coordinate with these vases? Check out our 
+<a href="https://fiftyflowers.com/collections/wholesale-centerpieces">Centerpiece</a> collection or our 
+<a href="https://fiftyflowers.com/collections/diy-flower-combos">DIY Flower Kits</a>.
+</p>
+
+<br>
+<p><strong><u>White Cylinder Vase - 4 inches</u></strong></p>
+<ul>
+<li><strong>Vase Height:</strong> 4 inches</li>
+<li><strong>Vase Width:</strong> 3.75 inches</li>
+<li><strong>Inner Opening Diameter:</strong> 3.75 inches</li>
+<li>Designed to use with our mini centerpiece arrangements.</li>
+<li>Add on the <a href="https://fiftyflowers.com/products/design-pillow-floral-supply-tool">design pillow tool</a></li>
+</ul>
+
+<br>
+<p><strong><u>White Cylinder Vase - 5 inches</u></strong></p>
+<ul>
+<li><strong>Vase Height:</strong> 5 inches</li>
+<li><strong>Vase Width:</strong> 5.5 inches</li>
+<li><strong>Inner Opening Diameter:</strong> 5.5 inches</li>
+<li>Designed to use with our small centerpiece arrangements.</li>
+<li>Add on the <a href="https://fiftyflowers.com/products/design-pillow-floral-supply-tool">design pillow tool</a></li>
+</ul>
+
+<br>
+<p><strong><u>White Cylinder Vase - 6 inches</u></strong></p>
+<ul>
+<li><strong>Vase Height:</strong> 6 inches</li>
+<li><strong>Vase Width:</strong> 6.5 inches</li>
+<li><strong>Inner Opening Diameter:</strong> 6.5 inches</li>
+<li>Designed to use with our medium centerpiece arrangements.</li>
+<li>Add on the <a href="https://fiftyflowers.com/products/design-pillow-floral-supply-tool">design pillow tool</a></li>
+</ul>
+  15. <p>These vases are made of high quality <strong>glass</strong>.</p>
+
+<p>
+Looking for fresh flower designs to coordinate with these vases? Check out our <a href="https://fiftyflowers.com/collections/wholesale-centerpieces">Centerpiece</a> collection or our <a href="https://fiftyflowers.com/collections/diy-flower-combos">DIY Flower Kits</a>.
+</p>
+
+<br>
+<p><strong><u>Bubble Ball Vase – Medium – 6 inches</u></strong></p>
+<ul>
+<li><strong>Vase Height:</strong> 5.88 inches</li>
+<li><strong>Vase Width:</strong> 5.88 inches</li>
+<li><strong>Inner Opening Diameter:</strong> 4.5 inches</li>
+<li>Designed to use with our small centerpiece arrangements.</li>
+<li>
+Add on the 
+<a href="https://fiftyflowers.com/products/design-pillow-floral-supply-tool">Design Pillow Tool</a>
+</li>
+</ul>
+
+<br>
+<p><strong><u>Bubble Ball Vase – Large – 8 inches</u></strong></p>
+<ul>
+<li><strong>Vase Height:</strong> 8 inches</li>
+<li><strong>Vase Width:</strong> 8 inches</li>
+<li><strong>Inner Opening Diameter:</strong> 5.25 inches</li>
+<li>Designed to use with our medium centerpiece arrangements.</li>
+<li>
+Add on the 
+<a href="https://fiftyflowers.com/products/design-pillow-floral-supply-tool">Design Pillow Tool</a>
+</li>
+</ul>
+
+Column: attributes.Delivery Date
+--------------------------------
+Basic unique count: 23
+Unique values after splitting by semicolon: 11
+Sample unique split values (11 shown):
+  1. January
+  2. August
+  3. July
+  4. November
+  5. October
+  6. April
+  7. May
+  8. March
+  9. June
+  10. December
+  11. September
+
+Column: attributes.DIY Kit Type
+-------------------------------
+Basic unique count: 134
+Unique values after splitting by semicolon: 10
+Sample unique split values (10 shown):
+  1. Spring
+  2. Winter
+  3. Pastel
+  4. Tropical
+  5. Customizable
+  6. Summer
+  7. Greenery
+  8. Fall
+  9. White
+  10. Colorful
+
+==================================================
+HTML TAGS DETECTION
+==================================================
+Column 'attributes.Type Description' contains HTML tags:
+  521 entries (6.51%) contain HTML tags
+  Sample values with HTML:
+    1. <p>Our arrangements are easy to use. Each bouquet comes pre-arranged and requires little to no special design skills. All you have to do is trim the s...
+    2. <p>Our Flower Bar Kits turn any event into an interactive floral experience. Each kit includes a curated mix of focal, filler, line flowers, and green...
+    3. <p>Our Flower Bar Kits turn any event into an interactive floral experience. Each kit includes a curated mix of focal, filler, line flowers, and green...
+
+Column 'attributes.Recipe description' contains HTML tags:
+  649 entries (18.59%) contain HTML tags
+  Sample values with HTML:
+    1. <p>Each bouquet features a harmoniously hand-crafted arrangement of lavender &amp; purple cremon, peach rose, pink carnation, green button, lavender p...
+    2. <p>Each bouquet features a harmoniously hand-crafted arrangement of purple kale, tinted purple hydrangea, white/cream garden roses, glitter pink white...
+    3. <p>Each centerpiece features a harmoniously hand-crafted arrangement of purple kale, tinted purple hydrangea, white/cream garden roses, glitter pink w...
+
+Column 'attributes.Additional Info 1' contains HTML tags:
+  893 entries (5.17%) contain HTML tags
+  Sample values with HTML:
+    1. <p>To determine how many petals you will need, check out <a href="https://www.youtube.com/watch?v=tpN8scO273Y" target="_blank">this video</a>.</p>
+    2. <p>To determine how many petals you will need, check out <a href="https://www.youtube.com/watch?v=tpN8scO273Y" target="_blank">this video</a>.</p>
+    3. <p>To determine how many petals you will need, check out <a href="https://www.youtube.com/watch?v=tpN8scO273Y" target="_blank">this video</a>.</p>
+
+Column 'attributes.Additional Info 2' contains HTML tags:
+  116 entries (0.98%) contain HTML tags
+  Sample values with HTML:
+    1. <p>Poppies are highly perishable. Please see our <u>Flower Care tab</u> on this page to learn how to properly care for your Poppies.</p>
+    2. <p>Poppies are highly perishable. Please see our <u>Flower Care tab</u> on this page to learn how to properly care for your Poppies.</p>
+    3. <p>Poppies are highly perishable. Please see our <u>Flower Care tab</u> on this page to learn how to properly care for your Poppies.</p>
+
+Column 'attributes.Additional Info 3' contains HTML tags:
+  1355 entries (35.07%) contain HTML tags
+  Sample values with HTML:
+    1. <p>Learn how to hydrate Hydrangeas the right way by clicking <a href="https://www.youtube.com/shorts/XrlnQoAHbVI" target="_blank">here</a>.</p>
+    2. <p>Learn how to hydrate Hydrangeas the right way by clicking <a href="https://www.youtube.com/shorts/XrlnQoAHbVI" target="_blank">here</a>.</p>
+    3. <p>Learn how to hydrate Hydrangeas the right way by clicking <a href="https://www.youtube.com/shorts/XrlnQoAHbVI" target="_blank">here</a>.</p>
+
+Column 'attributes.Additional Info 4' contains HTML tags:
+  616 entries (45.73%) contain HTML tags
+  Sample values with HTML:
+    1. <p>Check out <a href="https://www.youtube.com/shorts/R0UJS4v2BY8" target="_blank">this video</a> to see us unboxing and hydrating Mini Cymbidiums!</p>
+    2. <p>Check out <a href="https://www.youtube.com/shorts/R0UJS4v2BY8" target="_blank">this video</a> to see us unboxing and hydrating Mini Cymbidiums!</p>
+    3. <p>Download our <a href="https://cdn.shopify.com/s/files/1/0516/8968/5154/files/Flower_Bar_-_How_to_Guide.pdf?v=1744649125" target="_blank">Flower Bar...
+
+Column 'attributes.Additional Info 5' contains HTML tags:
+  293 entries (30.27%) contain HTML tags
+  Sample values with HTML:
+    1. <p>Need a ready-to-go sign for your bar? Get our printable <a href="https://cdn.shopify.com/s/files/1/0516/8968/5154/files/Flower_Bar_Sign.pdf?v=17446...
+    2. <p>Need a ready-to-go sign for your bar? Get our printable <a href="https://cdn.shopify.com/s/files/1/0516/8968/5154/files/Flower_Bar_Sign.pdf?v=17446...
+    3. <p>Need a ready-to-go sign for your bar? Get our printable <a href="https://cdn.shopify.com/s/files/1/0516/8968/5154/files/Flower_Bar_Sign.pdf?v=17446...
+
+Column 'attributes.Tinted Flowers' contains HTML tags:
+  4057 entries (100.00%) contain HTML tags
+  Sample values with HTML:
+    1. <p>This product includes tinted flowers. Please see the <u>Flower Care tab</u> on this page for handling instructions.</p>
+    2. <p>This product includes tinted flowers. Please see the <u>Flower Care tab</u> on this page for handling instructions.</p>
+    3. <p>This product includes tinted flowers. Please see the <u>Flower Care tab</u> on this page for handling instructions.</p>
+
+Column 'attributes.Description' contains HTML tags:
+  27199 entries (98.51%) contain HTML tags
+  Sample values with HTML:
+    1. <p>Fresh bulk Leis are custom made to order for your wedding ceremony, reception or special event. With this package, you may customize the colors of ...
+    2. <p>Find an array of wedding centerpieces at FiftyFlowers.com! These high end Mini Calla Lily and Leaf centerpiece combinations are offered in a variet...
+    3. <p>Find an array of wedding centerpieces at FiftyFlowers.com! These high end Mini Calla Lily and Leaf centerpiece combinations are offered in a variet...
+
+Column 'attributes.Recommended Delivery Date' contains HTML tags:
+  25888 entries (98.67%) contain HTML tags
+  Sample values with HTML:
+    1. <p><strong>Recommended Delivery Date:</strong> <u>2 days before your event.</u> (If your event is Saturday, suggested delivery day is Thursday)</p>
+    2. <p><strong>Recommended Delivery Date:</strong> <u>2 days before your event.</u> (If your event is Saturday, suggested delivery day is Thursday)</p>
+    3. <p><strong>Recommended Delivery Date:</strong> <u>2 days before your event.</u> (If your event is Saturday, suggested delivery day is Thursday)</p>
+
+Column 'attributes.Recipe Details' contains HTML tags:
+  1089 entries (34.80%) contain HTML tags
+  Sample values with HTML:
+    1. <p>This DIY Flower Kit features growers bunches of quicksand &amp; vendela roses, champagne ranunculus, moonstone garden rose, white solomio, blush sp...
+    2. <p>This DIY Flower Kit features growers bunches of quicksand &amp; vendela roses, champagne ranunculus, moonstone garden rose, white solomio, blush sp...
+    3. <p>This DIY Flower Kit features growers bunches of quicksand &amp; vendela roses, champagne ranunculus, moonstone garden rose, white solomio, blush sp...
+
+Column 'attributes.Size Breakdown' contains HTML tags:
+  7010 entries (100.00%) contain HTML tags
+  Sample values with HTML:
+    1. <ul>
+<li><strong>Each</strong> centerpiece will have 13 total flower stems.</li>
+</ul>
+    2. <ul>
+<li><strong>Each</strong> centerpiece will have 13 total flower stems.</li>
+</ul>
+    3. <ul>
+<li><strong>Each</strong> centerpiece will have 13 total flower stems.</li>
+</ul>
+
+Column 'attributes.Bouquet Recipe' contains HTML tags:
+  276 entries (100.00%) contain HTML tags
+  Sample values with HTML:
+    1. <p><strong>Suggested Flower Recipe For One Bouquet:</strong> 1 red rose, 1 burgundy carnations, 1 white calla lily, 1 white cushion pom, 1 dianthus, 1...
+    2. <p><strong>Suggested Flower Recipe For One Bouquet:</strong> 1 red rose, 1 burgundy carnations, 1 white calla lily, 1 white cushion pom, 1 dianthus, 1...
+    3. <p><strong>Suggested Flower Recipe For One Bouquet:</strong> 1 red rose, 1 burgundy carnations, 1 white calla lily, 1 white cushion pom, 1 dianthus, 1...
+
+Column 'attributes.Related Product' contains HTML tags:
+  1962 entries (100.00%) contain HTML tags
+  Sample values with HTML:
+    1. <p><span>For a slightly more hands-on approach to creating stunning floral designs, check out our </span><a rel="noopener" href="https://fiftyflowers....
+    2. <p>Looking for ready-made centerpieces with the same recipe? Our <a href="https://fiftyflowers.com/products/sparkles-11416">Antique Holiday Rose Flowe...
+    3. <p>Looking for ready-made centerpieces with the same recipe? Our <a href="https://fiftyflowers.com/products/sparkles-11416">Antique Holiday Rose Flowe...
+
+Column 'attributes.Open Text 1' contains HTML tags:
+  544 entries (89.47%) contain HTML tags
+  Sample values with HTML:
+    1. <ul>
+<li>This package features 10 deluxe strung leis, with your choice of one color option.</li>
+<li>Leis are made with Dendrobium Orchids. Some color...
+    2. <ul>
+<li>This package features 10 single strung leis, with your choice of one color option.</li>
+<li>Leis are made with Dendrobium Orchids. Some color...
+    3. <ul>
+<li>This package features 10 single strung leis, with your choice of one color option.</li>
+<li>Leis are made with Dendrobium Orchids. Some color...
+
+Column 'attributes.Package Breakdown' contains HTML tags:
+  814 entries (100.00%) contain HTML tags
+  Sample values with HTML:
+    1. <p><strong>Elopement Package Includes:</strong> 1 Bridal Bouquet, 1 Boutonniere</p>
+<p><strong>Intimate Package Includes:</strong> 1 Bridal Bouquet, 3...
+    2. <p><strong>Elopement Package Includes:</strong> 1 Bridal Bouquet, 1 Boutonniere</p>
+<p><strong>Intimate Package Includes:</strong> 1 Bridal Bouquet, 3...
+    3. <p><strong>Elopement Package Includes:</strong> 1 Bridal Bouquet, 1 Boutonniere</p>
+<p><strong>Intimate Package Includes:</strong> 1 Bridal Bouquet, 3...
+
+Column 'attributes.Open Text 2' contains HTML tags:
+  8 entries (100.00%) contain HTML tags
+  Sample values with HTML:
+    1. <ul>
+<li>Add one ounce of beads (about 2 level tablespoons) to one gallon of water. For smaller amounts, use one tablespoon per 2 quarts. Let the bead...
+    2. <ul>
+<li>Add one ounce of beads (about 2 level tablespoons) to one gallon of water. For smaller amounts, use one tablespoon per 2 quarts. Let the bead...
+    3. <ul>
+<li>Fill each water pick with clean water, about two-thirds full (a spray bottle works great for easy, mess-free filling).</li>
+<li>Press the cap...
+
+Column 'attributes.Open Text 3' contains HTML tags:
+  3 entries (100.00%) contain HTML tags
+  Sample values with HTML:
+    1. <ul>
+<li>Refresh beads by adding more water if they begin to dry out.</li>
+<li>After extended use, beads can be rinsed with hot water while in a strai...
+    2. <ul>
+<li>Refresh beads by adding more water if they begin to dry out.</li>
+<li>After extended use, beads can be rinsed with hot water while in a strai...
+    3. <ul>
+<li>Refresh beads by adding more water if they begin to dry out.</li>
+<li>After extended use, beads can be rinsed with hot water while in a strai...
+
+Column 'attributes.PDF Recipe' contains HTML tags:
+  25 entries (100.00%) contain HTML tags
+  Sample values with HTML:
+    1. <p><a target="_blank" rel="noopener" href="https://cdn.shopify.com/s/files/1/0516/8968/5154/files/Colorful_Meadows_DIY_Flower_Kit.pdf?v=1752177626"><u...
+    2. <p><a target="_blank" rel="noopener" href="https://cdn.shopify.com/s/files/1/0516/8968/5154/files/Colorful_Meadows_DIY_Flower_Kit.pdf?v=1752177626"><u...
+    3. <p><a target="_blank" rel="noopener" href="https://cdn.shopify.com/s/files/1/0516/8968/5154/files/Colorful_Meadows_DIY_Flower_Kit.pdf?v=1752177626"><u...
+
+Column 'attributes.Wedding Bouquet Recipe' contains HTML tags:
+  6 entries (100.00%) contain HTML tags
+  Sample values with HTML:
+    1. <p><strong>Wedding Bouquet Features:</strong> Curly willow, baby eucalyptus, sword fern, ruscus, salal, leather leaf, and naked seeded eucalyptus, wra...
+    2. <p><strong>Wedding Bouquet Features:</strong> Lemon garden roses, gold forever mini calla lillies, natasha sunny disbuds, yellow roses, yellow crasped...
+    3. <p><strong>Wedding Bouquet Features:</strong> Yellow pincushion, succulent, rose yellow, gold forever calla lilies, patience garden rose, vendela rose...
+
+Column 'attributes.Boutonniere Recipe' contains HTML tags:
+  6 entries (100.00%) contain HTML tags
+  Sample values with HTML:
+    1. <p><strong>Boutonniere Features:</strong> Ruscus, naked seeded eucalyptus, and baby eucalyptus, wrapped with jute string.</p>
+    2. <p><strong>Boutonniere Features:</strong> Craspedia billy balls and dusty miller.</p>
+    3. <p><strong>Boutonniere Features:</strong> Yellow calla lily and dusty miller.</p>
+
+
+==================================================
+ALL COLUMNS OVERVIEW
+==================================================
+Hash version:
+  Data type: object
+  Non-null count: 27680
+  Unique values: 446
+
+Product command:
+  Data type: object
+  Non-null count: 27680
+  Unique values: 1
+
+Product ID:
+  Data type: int64
+  Non-null count: 27680
+  Unique values: 4935
+
+Product name:
+  Data type: object
+  Non-null count: 27680
+  Unique values: 4935
+
+Product status:
+  Data type: object
+  Non-null count: 27680
+  Unique values: 2
+
+Group:
+  Data type: object
+  Non-null count: 27680
+  Unique values: 124
+
+Subgroup:
+  Data type: object
+  Non-null count: 27680
+  Unique values: 142
+
+Buyer:
+  Data type: object
+  Non-null count: 26968
+  Unique values: 5
+
+Variant command:
+  Data type: object
+  Non-null count: 27680
+  Unique values: 2
+
+Variant ID:
+  Data type: float64
+  Non-null count: 27676
+  Unique values: 18653
+
+Variant name:
+  Data type: object
+  Non-null count: 27676
+  Unique values: 1770
+
+Variant units:
+  Data type: float64
+  Non-null count: 27676
+  Unique values: 69
+
+Variant measure units:
+  Data type: object
+  Non-null count: 27233
+  Unique values: 16
+
+Variant price:
+  Data type: float64
+  Non-null count: 27676
+  Unique values: 287
+
+Variant status:
+  Data type: object
+  Non-null count: 27676
+  Unique values: 2
+
+Option command:
+  Data type: object
+  Non-null count: 27680
+  Unique values: 2
+
+Option ID:
+  Data type: float64
+  Non-null count: 9971
+  Unique values: 1603
+
+Option label:
+  Data type: object
+  Non-null count: 9970
+  Unique values: 284
+
+Option value command:
+  Data type: object
+  Non-null count: 27680
+  Unique values: 2
+
+Option value ID:
+  Data type: float64
+  Non-null count: 9933
+  Unique values: 9933
+
+Option value type:
+  Data type: object
+  Non-null count: 9933
+  Unique values: 2
+
+Option value (variant ID reference):
+  Data type: float64
+  Non-null count: 1999
+  Unique values: 405
+
+Option value label:
+  Data type: object
+  Non-null count: 9933
+  Unique values: 855
+
+Option value price:
+  Data type: float64
+  Non-null count: 27680
+  Unique values: 22
+
+Option value default:
+  Data type: object
+  Non-null count: 9933
+  Unique values: 2
+
+Option value status:
+  Data type: object
+  Non-null count: 9933
+  Unique values: 2
+
+Tags (by semicolon):
+  Data type: object
+  Non-null count: 21727
+  Unique values: 829
+
+Weekdays (by semicolon):
+  Data type: object
+  Non-null count: 27680
+  Unique values: 17
+
+Seasonality (by semicolon):
+  Data type: object
+  Non-null count: 27680
+  Unique values: 256
+
+Colors (by semicolon):
+  Data type: object
+  Non-null count: 26668
+  Unique values: 942
+
+attributes.Type Description:
+  Data type: object
+  Non-null count: 8002
+  Unique values: 25
+
+attributes.Recipe description:
+  Data type: object
+  Non-null count: 3492
+  Unique values: 660
+
+attributes.Average Boutonniere & Corsage Height:
+  Data type: object
+  Non-null count: 269
+  Unique values: 2
+
+attributes.Expected Vase Life:
+  Data type: object
+  Non-null count: 24544
+  Unique values: 15
+
+attributes.Additional Info 1:
+  Data type: object
+  Non-null count: 17266
+  Unique values: 224
+
+attributes.Additional Info 2:
+  Data type: object
+  Non-null count: 11786
+  Unique values: 111
+
+attributes.Additional Info 3:
+  Data type: object
+  Non-null count: 3864
+  Unique values: 61
+
+attributes.Additional Info 4:
+  Data type: object
+  Non-null count: 1347
+  Unique values: 19
+
+attributes.Additional Info 5:
+  Data type: object
+  Non-null count: 968
+  Unique values: 12
+
+attributes.Tinted Flowers:
+  Data type: object
+  Non-null count: 4057
+  Unique values: 4
+
+attributes.DIY Level:
+  Data type: object
+  Non-null count: 25888
+  Unique values: 3
+
+attributes.Holiday Occasion:
+  Data type: object
+  Non-null count: 25728
+  Unique values: 414
+
+attributes.Recipe metafield:
+  Data type: object
+  Non-null count: 25901
+  Unique values: 883
+
+attributes.Focal Recipe:
+  Data type: object
+  Non-null count: 7391
+  Unique values: 205
+
+attributes.Line Recipe:
+  Data type: object
+  Non-null count: 2591
+  Unique values: 34
+
+attributes.Filler Recipe:
+  Data type: object
+  Non-null count: 6312
+  Unique values: 388
+
+attributes.Greens Recipe:
+  Data type: object
+  Non-null count: 6196
+  Unique values: 56
+
+attributes.Availability:
+  Data type: object
+  Non-null count: 26378
+  Unique values: 2
+
+attributes.Description:
+  Data type: object
+  Non-null count: 27611
+  Unique values: 4705
+
+attributes.Fallback Lead Days:
+  Data type: float64
+  Non-null count: 27006
+  Unique values: 21
+
+attributes.Fallback Max Units per Day:
+  Data type: float64
+  Non-null count: 27341
+  Unique values: 130
+
+attributes.Recommended Delivery Date:
+  Data type: object
+  Non-null count: 26237
+  Unique values: 13
+
+attributes.SEO Description:
+  Data type: object
+  Non-null count: 19300
+  Unique values: 2889
+
+attributes.SEO Title:
+  Data type: object
+  Non-null count: 27001
+  Unique values: 4662
+
+attributes.Product Type:
+  Data type: object
+  Non-null count: 26290
+  Unique values: 213
+
+attributes.Product Type - All Flowers:
+  Data type: object
+  Non-null count: 26266
+  Unique values: 25
+
+attributes.Seasonality:
+  Data type: object
+  Non-null count: 26836
+  Unique values: 15
+
+attributes.Shopify Tags:
+  Data type: object
+  Non-null count: 26302
+  Unique values: 4599
+
+attributes.Shopify Type:
+  Data type: object
+  Non-null count: 26315
+  Unique values: 153
+
+attributes.Average Stem Length:
+  Data type: object
+  Non-null count: 21486
+  Unique values: 97
+
+attributes.Vases Not Included:
+  Data type: object
+  Non-null count: 6499
+  Unique values: 2
+
+attributes.Recipe Details:
+  Data type: object
+  Non-null count: 3129
+  Unique values: 390
+
+attributes.Size Breakdown:
+  Data type: object
+  Non-null count: 7010
+  Unique values: 555
+
+attributes.Bouquet Recipe:
+  Data type: object
+  Non-null count: 276
+  Unique values: 88
+
+attributes.Related Product:
+  Data type: object
+  Non-null count: 1962
+  Unique values: 284
+
+attributes.Stems Per Bunch:
+  Data type: object
+  Non-null count: 15165
+  Unique values: 46
+
+attributes.Blooms Per Stem:
+  Data type: object
+  Non-null count: 14110
+  Unique values: 107
+
+attributes.Color Description:
+  Data type: object
+  Non-null count: 14662
+  Unique values: 536
+
+attributes.Scent:
+  Data type: object
+  Non-null count: 9037
+  Unique values: 116
+
+attributes.Symbolism:
+  Data type: object
+  Non-null count: 14669
+  Unique values: 186
+
+attributes.Blooms Per Pack:
+  Data type: object
+  Non-null count: 124
+  Unique values: 20
+
+attributes.Average Diameter:
+  Data type: object
+  Non-null count: 16
+  Unique values: 7
+
+attributes.Average Globe Size:
+  Data type: object
+  Non-null count: 9
+  Unique values: 1
+
+attributes.Branches Per Bunch:
+  Data type: object
+  Non-null count: 38
+  Unique values: 2
+
+attributes.Average Branch Length:
+  Data type: object
+  Non-null count: 38
+  Unique values: 7
+
+attributes.Average Spike Size:
+  Data type: object
+  Non-null count: 5
+  Unique values: 1
+
+attributes.Vases Included:
+  Data type: object
+  Non-null count: 172
+  Unique values: 10
+
+attributes.Average Bloom Size:
+  Data type: object
+  Non-null count: 60
+  Unique values: 5
+
+attributes.Recipe Kit - Ready To Go:
+  Data type: object
+  Non-null count: 282
+  Unique values: 24
+
+attributes.Material:
+  Data type: object
+  Non-null count: 133
+  Unique values: 5
+
+attributes.Foams Purpose:
+  Data type: object
+  Non-null count: 10
+  Unique values: 2
+
+attributes.Supplies Product Type:
+  Data type: object
+  Non-null count: 212
+  Unique values: 21
+
+attributes.Open Text 1:
+  Data type: object
+  Non-null count: 608
+  Unique values: 212
+
+attributes.Delivery Date:
+  Data type: object
+  Non-null count: 290
+  Unique values: 23
+
+attributes.Average Pod Width:
+  Data type: object
+  Non-null count: 35
+  Unique values: 5
+
+attributes.Number of Stems:
+  Data type: object
+  Non-null count: 357
+  Unique values: 32
+
+attributes.Faux Stem Length:
+  Data type: object
+  Non-null count: 105
+  Unique values: 1
+
+attributes.Average Bloom Height:
+  Data type: object
+  Non-null count: 240
+  Unique values: 3
+
+attributes.Average Bloom Width:
+  Data type: object
+  Non-null count: 285
+  Unique values: 3
+
+attributes.Average Length:
+  Data type: object
+  Non-null count: 277
+  Unique values: 19
+
+attributes.Recipe:
+  Data type: object
+  Non-null count: 914
+  Unique values: 120
+
+attributes.Wreath Diameter:
+  Data type: object
+  Non-null count: 193
+  Unique values: 14
+
+attributes.Package Breakdown:
+  Data type: object
+  Non-null count: 814
+  Unique values: 5
+
+attributes.Average Centerpiece Height:
+  Data type: object
+  Non-null count: 749
+  Unique values: 1
+
+attributes.Average Centerpiece Width:
+  Data type: object
+  Non-null count: 749
+  Unique values: 1
+
+attributes.Average Garland Length:
+  Data type: object
+  Non-null count: 700
+  Unique values: 1
+
+attributes.Average Garland Width:
+  Data type: object
+  Non-null count: 1423
+  Unique values: 9
+
+attributes.Average Bridal Bouquet Height:
+  Data type: object
+  Non-null count: 960
+  Unique values: 2
+
+attributes.Average Bridal Bouquet Width:
+  Data type: object
+  Non-null count: 895
+  Unique values: 1
+
+attributes.Average Boutonniere Height:
+  Data type: object
+  Non-null count: 771
+  Unique values: 1
+
+attributes.Average Leaf Length:
+  Data type: object
+  Non-null count: 74
+  Unique values: 18
+
+attributes.Average Total Length:
+  Data type: object
+  Non-null count: 47
+  Unique values: 12
+
+attributes.Average Leaf Width:
+  Data type: object
+  Non-null count: 57
+  Unique values: 14
+
+attributes.Open Text 2:
+  Data type: object
+  Non-null count: 8
+  Unique values: 3
+
+attributes.Open Text 3:
+  Data type: object
+  Non-null count: 3
+  Unique values: 1
+
+attributes.Average Width:
+  Data type: object
+  Non-null count: 25
+  Unique values: 4
+
+attributes.DIY Kit Type:
+  Data type: object
+  Non-null count: 3093
+  Unique values: 134
+
+attributes.PDF Recipe:
+  Data type: object
+  Non-null count: 25
+  Unique values: 8
+
+attributes.Garland Length:
+  Data type: object
+  Non-null count: 732
+  Unique values: 4
+
+attributes.Additional Info 6:
+  Data type: object
+  Non-null count: 120
+  Unique values: 2
+
+attributes.Additional Info 7:
+  Data type: object
+  Non-null count: 90
+  Unique values: 1
+
+attributes.Additional Info 8:
+  Data type: object
+  Non-null count: 90
+  Unique values: 1
+
+attributes.Coverage Area:
+  Data type: object
+  Non-null count: 870
+  Unique values: 4
+
+attributes.Cups Per Pack:
+  Data type: object
+  Non-null count: 515
+  Unique values: 2
+
+attributes.Arch Size:
+  Data type: object
+  Non-null count: 3
+  Unique values: 1
+
+attributes.Garland & Wreath Height:
+  Data type: object
+  Non-null count: 30
+  Unique values: 1
+
+attributes.Average Corsage Height:
+  Data type: object
+  Non-null count: 64
+  Unique values: 1
+
+attributes.Average Garland Height:
+  Data type: object
+  Non-null count: 1
+  Unique values: 1
+
+attributes.Wedding Bouquet Recipe:
+  Data type: object
+  Non-null count: 6
+  Unique values: 6
+
+attributes.Boutonniere Recipe:
+  Data type: object
+  Non-null count: 6
+  Unique values: 6
+
+attributes.Minimony Package Includes:
+  Data type: object
+  Non-null count: 140
+  Unique values: 1
+
+attributes.Intimate Package Includes:
+  Data type: object
+  Non-null count: 140
+  Unique values: 1

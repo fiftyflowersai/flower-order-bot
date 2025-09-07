@@ -1,137 +1,86 @@
 {
-  "unique_colors": [
-    "amber",
-    "black",
-    "blue",
-    "blush",
-    "blush pink",
-    "bronze",
-    "brown",
-    "burgundy",
-    "champagne",
-    "chartreuse",
-    "choose your colors",
-    "clear",
-    "copper",
-    "coral",
-    "cranberry",
-    "dark orange",
-    "dark purple",
-    "dark yellow",
-    "dusty pink",
-    "dusty rose",
-    "emerald green",
-    "farm mixes",
-    "forest green",
-    "fuchsia",
-    "gold",
-    "gray",
-    "green",
-    "hot pink",
-    "ivory",
-    "lavender",
-    "light blue",
-    "light green updated",
-    "light pink",
-    "lime green",
-    "magenta",
-    "mauve",
-    "multicolor",
-    "mustard yellow",
-    "natural",
-    "orange",
-    "pale yellow",
-    "peach",
-    "pink",
-    "pinky lavender",
-    "purple",
-    "rainbow",
-    "red",
-    "rust",
-    "sage green",
-    "silver",
-    "soft blue",
-    "sunset",
-    "teal",
-    "terracotta",
-    "true green",
-    "true orange",
-    "true pink",
-    "true purple",
-    "true red",
-    "white",
-    "wine red",
-    "yellow"
-  ],
   "color_categories": {
     "red": [
       "red",
-      "true red",
+      "true red", 
       "burgundy",
       "cranberry",
-      "maroon",
-      "crimson"
+      "wine red",
+      "rust"
     ],
     "pink": [
       "pink",
       "light pink",
-      "hot pink",
+      "hot pink", 
       "true pink",
       "blush",
+      "blush pink",
       "fuchsia",
       "magenta",
-      "coral"
+      "coral",
+      "dusty pink",
+      "dusty rose",
+      "mauve"
     ],
     "white": [
       "white",
       "ivory",
-      "cream",
-      "off-white"
+      "clear",
+      "natural",
+      "champagne"
     ],
     "yellow": [
       "yellow",
-      "golden",
       "amber",
       "chartreuse",
-      "lemon"
+      "gold",
+      "pale yellow",
+      "mustard yellow",
+      "dark yellow"
     ],
     "orange": [
       "orange",
       "peach",
-      "sunset",
+      "sunset", 
       "terracotta",
-      "apricot"
+      "copper",
+      "dark orange",
+      "true orange"
     ],
     "purple": [
       "purple",
       "lavender",
       "pinky lavender",
-      "violet",
-      "plum"
+      "true purple",
+      "dark purple"
     ],
     "blue": [
       "blue",
       "soft blue",
-      "navy",
-      "light blue"
+      "light blue",
+      "teal"
     ],
     "green": [
       "green",
-      "sage",
-      "mint",
-      "lime"
+      "sage green",
+      "emerald green", 
+      "forest green",
+      "lime green",
+      "light green updated",
+      "true green"
     ],
-    "brown": [
+    "neutral": [
+      "black",
+      "gray", 
+      "silver",
       "brown",
-      "bronze",
-      "chocolate",
-      "tan"
+      "bronze"
     ],
     "mixed": [
       "farm mixes",
       "rainbow",
       "multicolor",
-      "assorted"
+      "choose your colors"
     ]
   }
 }

@@ -14,3 +14,4 @@ langchain-experimental
 pandas 
 python-dotenv 
 openpyxl
+psycopg2-binary

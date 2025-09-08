@@ -53,6 +53,17 @@ def debug_data_structure(df):
         status_cols = [col for col in df.columns if 'status' in col.lower()]
         print(status_cols)
     
+    # Check Variant status values
+    if 'Variant status' in df.columns:
+        print(f"\nVariant status values:")
+        variant_status_counts = df['Variant status'].value_counts(dropna=False)
+        print(variant_status_counts)
+    else:
+        print("\n'Variant status' column not found!")
+        print("Available columns containing 'variant' and 'status':")
+        variant_status_cols = [col for col in df.columns if 'variant' in col.lower() and 'status' in col.lower()]
+        print(variant_status_cols)
+    
     # Check for critical columns
     critical_columns = ['Product ID', 'Variant ID', 'Product name', 'Variant price']
     print(f"\nCritical columns check:")
@@ -74,6 +85,76 @@ def debug_data_structure(df):
     
     if len(df.columns) > 20:
         print(f"... and {len(df.columns) - 20} more columns")
+
+def filter_active_products_and_variants(df):
+    """Filter to keep only active products AND active variants"""
+    print("\nFiltering for active products and variants...")
+    initial_count = len(df)
+    
+    # Track filtering steps
+    removed_by_product_status = 0
+    removed_by_variant_status = 0
+    
+    # Filter by Product status
+    if 'Product status' in df.columns:
+        print(f"\nProduct status analysis:")
+        status_counts = df['Product status'].value_counts(dropna=False)
+        print(status_counts)
+        
+        unique_statuses = df['Product status'].unique()
+        print(f"Unique product status values: {unique_statuses}")
+        
+        # Filter for active products
+        if 'Active' in unique_statuses:
+            before_filter = len(df)
+            df = df[df['Product status'] == 'Active']
+            removed_by_product_status = before_filter - len(df)
+            print(f"Filtered to 'Active' products: {len(df)} (removed {removed_by_product_status})")
+        elif 'active' in unique_statuses:
+            before_filter = len(df)
+            df = df[df['Product status'] == 'active']
+            removed_by_product_status = before_filter - len(df)
+            print(f"Filtered to 'active' products: {len(df)} (removed {removed_by_product_status})")
+        else:
+            print("Warning: No 'Active' status found in Product status. Keeping all products.")
+    else:
+        print("No 'Product status' column found. Skipping product status filtering.")
+    
+    # Filter by Variant status
+    if 'Variant status' in df.columns:
+        print(f"\nVariant status analysis:")
+        variant_status_counts = df['Variant status'].value_counts(dropna=False)
+        print(variant_status_counts)
+        
+        unique_variant_statuses = df['Variant status'].unique()
+        print(f"Unique variant status values: {unique_variant_statuses}")
+        
+        # Filter for active variants
+        if 'Active' in unique_variant_statuses:
+            before_filter = len(df)
+            df = df[df['Variant status'] == 'Active']
+            removed_by_variant_status = before_filter - len(df)
+            print(f"Filtered to 'Active' variants: {len(df)} (removed {removed_by_variant_status})")
+        elif 'active' in unique_variant_statuses:
+            before_filter = len(df)
+            df = df[df['Variant status'] == 'active']
+            removed_by_variant_status = before_filter - len(df)
+            print(f"Filtered to 'active' variants: {len(df)} (removed {removed_by_variant_status})")
+        else:
+            print("Warning: No 'Active' status found in Variant status. Keeping all variants.")
+    else:
+        print("No 'Variant status' column found. Skipping variant status filtering.")
+    
+    # Summary of filtering
+    total_removed = removed_by_product_status + removed_by_variant_status
+    print(f"\nFiltering Summary:")
+    print(f"  Initial rows: {initial_count}")
+    print(f"  Removed by Product status: {removed_by_product_status}")
+    print(f"  Removed by Variant status: {removed_by_variant_status}")
+    print(f"  Final rows: {len(df)}")
+    print(f"  Total removed: {total_removed}")
+    
+    return df
 
 def strip_html_tags(text):
     """Remove HTML tags from text"""
@@ -234,10 +315,10 @@ def clean_flower_data():
     # Phase 2: Initial Data Preparation
     print("\nPhase 2: Initial Data Preparation")
     
-    # Keep only essential columns that actually exist
+    # Keep only essential columns that actually exist - UPDATED to include Variant status
     essential_columns = [
         'Product ID', 'Variant ID', 'Product name', 'Variant name', 'Group', 'Subgroup',
-        'Variant price', 'Product status', 'Colors (by semicolon)', 'Seasonality (by semicolon)',
+        'Variant price', 'Product status', 'Variant status', 'Colors (by semicolon)', 'Seasonality (by semicolon)',
         'attributes.Holiday Occasion', 'attributes.DIY Level', 'attributes.Product Type - All Flowers',
         'attributes.Recipe metafield', 'attributes.Description', 'Option value label'
     ]
@@ -251,37 +332,14 @@ def clean_flower_data():
     
     df_clean = df[available_columns].copy()
     
-    # FIXED: Handle Product status filtering more carefully
-    if 'Product status' in df_clean.columns:
-        print(f"\nProduct status analysis:")
-        status_counts = df_clean['Product status'].value_counts(dropna=False)
-        print(status_counts)
-        
-        # Check what status values we actually have
-        unique_statuses = df_clean['Product status'].unique()
-        print(f"Unique status values: {unique_statuses}")
-        
-        # Try different filtering approaches
-        if 'Active' in unique_statuses:
-            initial_count = len(df_clean)
-            df_clean = df_clean[df_clean['Product status'] == 'Active']
-            print(f"Filtered to 'Active' products: {len(df_clean)} (removed {initial_count - len(df_clean)})")
-        elif 'active' in unique_statuses:
-            initial_count = len(df_clean)
-            df_clean = df_clean[df_clean['Product status'] == 'active']
-            print(f"Filtered to 'active' products: {len(df_clean)} (removed {initial_count - len(df_clean)})")
-        else:
-            # If no clear 'Active' status, skip filtering and warn
-            print("Warning: No 'Active' status found. Keeping all products.")
-            print("Consider manually checking what status values indicate active products.")
-    else:
-        print("No 'Product status' column found. Keeping all products.")
+    # UPDATED: Filter for active products AND active variants
+    df_clean = filter_active_products_and_variants(df_clean)
     
     # If we have no data left, stop here with better error handling
     if len(df_clean) == 0:
-        print("\nERROR: No data remaining after filtering!")
-        print("This suggests the Product status filtering is too restrictive.")
-        print("Please check the actual values in your Product status column.")
+        print("\nERROR: No data remaining after status filtering!")
+        print("This suggests the Product/Variant status filtering is too restrictive.")
+        print("Please check the actual values in your status columns.")
         return None
     
     # Remove rows missing critical data

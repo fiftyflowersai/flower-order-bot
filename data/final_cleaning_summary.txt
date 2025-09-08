@@ -2,41 +2,41 @@ FINAL DATA CLEANING SUMMARY
 ==================================================
 
 Original rows: 27680
-Final rows: 22776
+Final rows: 22369
 Duplicate groups processed: 825
 Color expansions created: 4949
 Final columns: 22
 
 COLUMN BREAKDOWN:
 ------------------------------
-unique_id: 22776/22776 (100.0%)
-product_name: 22776/22776 (100.0%)
-variant_name: 22776/22776 (100.0%)
-description_clean: 22771/22776 (100.0%)
-variant_price: 22776/22776 (100.0%)
-group_category: 22776/22776 (100.0%)
-subgroup_category: 22776/22776 (100.0%)
-product_type_all_flowers: 22683/22776 (99.6%)
-recipe_metafield: 22338/22776 (98.1%)
-holiday_occasion: 22181/22776 (97.4%)
-diy_level: 22331/22776 (98.0%)
-colors_raw: 22776/22776 (100.0%)
-seasonality: 22776/22776 (100.0%)
-non_color_options: 22776/22776 (100.0%)
-has_red: 22776/22776 (100.0%)
-has_pink: 22776/22776 (100.0%)
-has_white: 22776/22776 (100.0%)
-has_yellow: 22776/22776 (100.0%)
-has_orange: 22776/22776 (100.0%)
-has_purple: 22776/22776 (100.0%)
-has_blue: 22776/22776 (100.0%)
-has_green: 22776/22776 (100.0%)
+unique_id: 22369/22369 (100.0%)
+product_name: 22369/22369 (100.0%)
+variant_name: 22369/22369 (100.0%)
+description_clean: 22364/22369 (100.0%)
+variant_price: 22369/22369 (100.0%)
+group_category: 22369/22369 (100.0%)
+subgroup_category: 22369/22369 (100.0%)
+product_type_all_flowers: 22276/22369 (99.6%)
+recipe_metafield: 21931/22369 (98.0%)
+holiday_occasion: 21774/22369 (97.3%)
+diy_level: 21924/22369 (98.0%)
+colors_raw: 22369/22369 (100.0%)
+seasonality: 22369/22369 (100.0%)
+non_color_options: 22369/22369 (100.0%)
+has_red: 22369/22369 (100.0%)
+has_pink: 22369/22369 (100.0%)
+has_white: 22369/22369 (100.0%)
+has_yellow: 22369/22369 (100.0%)
+has_orange: 22369/22369 (100.0%)
+has_purple: 22369/22369 (100.0%)
+has_blue: 22369/22369 (100.0%)
+has_green: 22369/22369 (100.0%)
 
 DATA QUALITY CHECKS:
 ------------------------------
-Unique IDs: 22776/22776 (✓)
-Products with colors: 20565/22776 (90.3%)
-Products with prices: 22776/22776 (100.0%)
+Unique IDs: 22369/22369 (✓)
+Products with colors: 20168/22369 (90.2%)
+Products with prices: 22369/22369 (100.0%)
 
 READY FOR:
 - PostgreSQL import

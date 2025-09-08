@@ -366,6 +366,7 @@ def clean_flower_data():
         'Group': 'group_category',
         'Subgroup': 'subgroup_category', 
         'Variant name': 'variant_name',
+        'Variant price': 'variant_price',
         'attributes.Holiday Occasion': 'holiday_occasion',
         'attributes.DIY Level': 'diy_level',
         'Seasonality (by semicolon)': 'seasonality',

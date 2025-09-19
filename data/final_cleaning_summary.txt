@@ -1,11 +1,11 @@
-FINAL DATA CLEANING SUMMARY
-==================================================
+FINAL DATA CLEANING SUMMARY WITH NUMERIC SEASONALITY
+============================================================
 
 Original rows: 27680
 Final rows: 22369
 Duplicate groups processed: 825
 Color expansions created: 4949
-Final columns: 22
+Final columns: 35
 
 COLUMN BREAKDOWN:
 ------------------------------
@@ -22,6 +22,19 @@ holiday_occasion: 21774/22369 (97.3%)
 diy_level: 21924/22369 (98.0%)
 colors_raw: 22369/22369 (100.0%)
 seasonality: 22369/22369 (100.0%)
+season_start_month: 2853/22369 (12.8%)
+season_start_day: 2853/22369 (12.8%)
+season_end_month: 2853/22369 (12.8%)
+season_end_day: 2853/22369 (12.8%)
+season_range_2_start_month: 738/22369 (3.3%)
+season_range_2_start_day: 738/22369 (3.3%)
+season_range_2_end_month: 738/22369 (3.3%)
+season_range_2_end_day: 738/22369 (3.3%)
+season_range_3_start_month: 10/22369 (0.0%)
+season_range_3_start_day: 10/22369 (0.0%)
+season_range_3_end_month: 10/22369 (0.0%)
+season_range_3_end_day: 10/22369 (0.0%)
+is_year_round: 22369/22369 (100.0%)
 non_color_options: 22369/22369 (100.0%)
 has_red: 22369/22369 (100.0%)
 has_pink: 22369/22369 (100.0%)
@@ -37,8 +50,23 @@ DATA QUALITY CHECKS:
 Unique IDs: 22369/22369 (✓)
 Products with colors: 20168/22369 (90.2%)
 Products with prices: 22369/22369 (100.0%)
+Year-round products: 19516/22369 (87.2%)
+Products with date ranges: 2853/22369 (12.8%)
+Products with triple ranges: 10/22369 (0.0%)
+
+NEW NUMERIC SEASONALITY COLUMNS:
+----------------------------------------
+✓ season_start_month, season_start_day
+✓ season_end_month, season_end_day
+✓ season_range_2_start_month, season_range_2_start_day
+✓ season_range_2_end_month, season_range_2_end_day
+✓ season_range_3_start_month, season_range_3_start_day
+✓ season_range_3_end_month, season_range_3_end_day
+✓ is_year_round
 
 READY FOR:
-- PostgreSQL import
-- Chatbot filtering and recommendations
-- SQL queries with boolean color columns
+- PostgreSQL import with 3-range seasonality support
+- SQL-based date filtering using numeric comparisons
+- Chatbot filtering with direct SQL queries
+- High-performance date range queries
+- Complete seasonality coverage (no data loss)

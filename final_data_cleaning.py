@@ -35,6 +35,104 @@ def load_color_mapping():
             }
         }
 
+def parse_month_day(date_str):
+    """Convert 'May 28' to (5, 28)"""
+    month_map = {
+        'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
+        'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12
+    }
+    
+    try:
+        parts = date_str.strip().split()
+        month_name = parts[0][:3].lower()
+        day = int(parts[1])
+        
+        if month_name in month_map:
+            return month_map[month_name], day
+        else:
+            print(f"Warning: Unknown month '{month_name}' in date '{date_str}'")
+            return None, None
+    except (IndexError, ValueError) as e:
+        print(f"Warning: Could not parse date '{date_str}': {e}")
+        return None, None
+
+def parse_seasonality_to_numeric(seasonality_str):
+    """Convert seasonality string to numeric columns
+    
+    Returns dict with:
+    - season_start_month, season_start_day, season_end_month, season_end_day
+    - season_range_2_start_month, season_range_2_start_day, season_range_2_end_month, season_range_2_end_day
+    - is_year_round
+    """
+    result = {
+        'season_start_month': None,
+        'season_start_day': None,
+        'season_end_month': None,
+        'season_end_day': None,
+        'season_range_2_start_month': None,
+        'season_range_2_start_day': None,
+        'season_range_2_end_month': None,
+        'season_range_2_end_day': None,
+        'season_range_3_start_month': None, 
+        'season_range_3_start_day': None,
+        'season_range_3_end_month': None,
+        'season_range_3_end_day': None,
+        'is_year_round': False
+    }
+    
+    if pd.isna(seasonality_str) or seasonality_str == '':
+        return result
+    
+    seasonality_str = str(seasonality_str).strip()
+    
+    # Handle year-round
+    if seasonality_str.upper() == 'YR':
+        result['is_year_round'] = True
+        return result
+    
+    # Split by semicolon for multiple ranges
+    ranges = [r.strip() for r in seasonality_str.split(';')]
+    
+    for i, range_str in enumerate(ranges):
+        if ' - ' not in range_str:
+            print(f"Warning: Invalid range format '{range_str}' in seasonality '{seasonality_str}'")
+            continue
+            
+        try:
+            start_str, end_str = range_str.split(' - ')
+            start_month, start_day = parse_month_day(start_str.strip())
+            end_month, end_day = parse_month_day(end_str.strip())
+            
+            if start_month is None or end_month is None:
+                continue
+                
+            if i == 0:
+                # First range
+                result['season_start_month'] = start_month
+                result['season_start_day'] = start_day
+                result['season_end_month'] = end_month
+                result['season_end_day'] = end_day
+            elif i == 1:
+                # Second range
+                result['season_range_2_start_month'] = start_month
+                result['season_range_2_start_day'] = start_day
+                result['season_range_2_end_month'] = end_month
+                result['season_range_2_end_day'] = end_day
+            elif i == 2:
+                # Third range
+                result['season_range_3_start_month'] = start_month
+                result['season_range_3_start_day'] = start_day
+                result['season_range_3_end_month'] = end_month
+                result['season_range_3_end_day'] = end_day
+            else:
+                print(f"Warning: More than 3 ranges found in seasonality '{seasonality_str}', ignoring additional ranges")
+                
+        except Exception as e:
+            print(f"Warning: Error parsing range '{range_str}': {e}")
+            continue
+    
+    return result
+
 def debug_data_structure(df):
     """Debug the data structure to understand what we're working with"""
     print("\nDEBUG: Data Structure Analysis")
@@ -258,6 +356,13 @@ def process_duplicate_group(group_df, color_keywords, color_mapping):
             for col, val in color_bools.items():
                 new_row[col] = val
             
+            # Process seasonality to numeric columns
+            seasonality_col = 'Seasonality (by semicolon)' if 'Seasonality (by semicolon)' in new_row.index else None
+            seasonality_data = parse_seasonality_to_numeric(new_row[seasonality_col] if seasonality_col else '')
+            for col, val in seasonality_data.items():
+                # Convert None to np.nan for proper CSV handling
+                new_row[col] = val if val is not None else np.nan
+            
             result_rows.append(new_row)
     
     else:
@@ -280,14 +385,50 @@ def process_duplicate_group(group_df, color_keywords, color_mapping):
         for col, val in color_bools.items():
             base_row[col] = val
         
+        # Process seasonality to numeric columns
+        seasonality_col = 'Seasonality (by semicolon)' if 'Seasonality (by semicolon)' in base_row.index else None
+        seasonality_data = parse_seasonality_to_numeric(base_row[seasonality_col] if seasonality_col else '')
+        for col, val in seasonality_data.items():
+            base_row[col] = val
+        
         result_rows.append(base_row)
     
     return result_rows
 
+def test_seasonality_parsing(df):
+    """Test the seasonality parsing on actual data"""
+    print("\nTesting seasonality parsing...")
+    
+    if 'Seasonality (by semicolon)' not in df.columns:
+        print("No seasonality column found for testing")
+        return
+    
+    # Get unique seasonality values
+    unique_seasonality = df['Seasonality (by semicolon)'].dropna().unique()
+    print(f"Found {len(unique_seasonality)} unique seasonality patterns")
+    
+    # Test parsing on a few examples
+    test_cases = unique_seasonality[:10]  # Test first 10
+    
+    for seasonality in test_cases:
+        print(f"\nTesting: '{seasonality}'")
+        result = parse_seasonality_to_numeric(seasonality)
+        
+        if result['is_year_round']:
+            print("  → Year-round product")
+        else:
+            # Primary range
+            if result['season_start_month']:
+                print(f"  → Range 1: {result['season_start_month']}/{result['season_start_day']} - {result['season_end_month']}/{result['season_end_day']}")
+            
+            # Secondary range
+            if result['season_range_2_start_month']:
+                print(f"  → Range 2: {result['season_range_2_start_month']}/{result['season_range_2_start_day']} - {result['season_range_2_end_month']}/{result['season_range_2_end_day']}")
+
 def clean_flower_data():
     """Main data cleaning function"""
-    print("FINAL FLOWER DATA CLEANING")
-    print("=" * 50)
+    print("FINAL FLOWER DATA CLEANING WITH NUMERIC SEASONALITY")
+    print("=" * 60)
     
     # Phase 1: Setup and Validation
     print("\nPhase 1: Setup and Validation")
@@ -304,6 +445,9 @@ def clean_flower_data():
     debug_data_structure(df)
     
     color_mapping = load_color_mapping()
+    
+    # Test seasonality parsing before processing
+    test_seasonality_parsing(df)
     
     # Define comprehensive color keywords for option detection
     color_keywords = [
@@ -404,6 +548,12 @@ def clean_flower_data():
             for col, val in color_bools.items():
                 row[col] = val
             
+            # Process seasonality to numeric columns
+            seasonality_col = 'Seasonality (by semicolon)' if 'Seasonality (by semicolon)' in row.index else None
+            seasonality_data = parse_seasonality_to_numeric(row[seasonality_col] if seasonality_col else '')
+            for col, val in seasonality_data.items():
+                row[col] = val
+            
             all_processed_rows.append(row)
     
     print(f"Processed {duplicates_count} duplicate groups and {singles_count} single products")
@@ -436,15 +586,21 @@ def clean_flower_data():
         if old_col in df_final.columns:
             df_final[new_col] = df_final[old_col]
     
-    # Define final column order
+    # Define final column order - UPDATED to include numeric seasonality columns with 3rd range
     final_columns = [
         # Identity & Display (4)
         'unique_id', 'product_name', 'variant_name', 'description_clean',
         
-        # Core Raw Data (8)
+        # Core Raw Data (9) - keeping original seasonality for reference
         'variant_price', 'group_category', 'subgroup_category', 
         'product_type_all_flowers', 'recipe_metafield', 'holiday_occasion',
         'diy_level', 'colors_raw', 'seasonality',
+        
+        # Numeric Seasonality Columns (13) - now includes 3rd range
+        'season_start_month', 'season_start_day', 'season_end_month', 'season_end_day',
+        'season_range_2_start_month', 'season_range_2_start_day', 'season_range_2_end_month', 'season_range_2_end_day',
+        'season_range_3_start_month', 'season_range_3_start_day', 'season_range_3_end_month', 'season_range_3_end_day',
+        'is_year_round',
         
         # Non-color options (1)
         'non_color_options',
@@ -481,8 +637,40 @@ def clean_flower_data():
         products_with_colors = df_final[color_columns].any(axis=1).sum()
         print(f"Products with color categories: {products_with_colors}/{len(df_final)}")
     
-    # Phase 6: Output and Reporting
-    print("\nPhase 6: Saving Results")
+    # Check seasonality processing
+    seasonality_check = {
+        'year_round': df_final['is_year_round'].sum() if 'is_year_round' in df_final.columns else 0,
+        'with_ranges': df_final['season_start_month'].count() if 'season_start_month' in df_final.columns else 0,
+        'with_dual_ranges': df_final['season_range_2_start_month'].count() if 'season_range_2_start_month' in df_final.columns else 0
+    }
+    print(f"Seasonality processing: {seasonality_check}")
+    
+    # Phase 6: Post-process numeric columns for PostgreSQL compatibility
+    print("\nPhase 6: Post-process for PostgreSQL compatibility")
+    
+    # Convert float columns with NaN to proper integer/boolean format for PostgreSQL
+    numeric_columns = [
+        'season_start_month', 'season_start_day', 'season_end_month', 'season_end_day',
+        'season_range_2_start_month', 'season_range_2_start_day', 'season_range_2_end_month', 'season_range_2_end_day',
+        'season_range_3_start_month', 'season_range_3_start_day', 'season_range_3_end_month', 'season_range_3_end_day'
+    ]
+    
+    for col in numeric_columns:
+        if col in df_final.columns:
+            # Convert to nullable integer type for PostgreSQL
+            df_final[col] = df_final[col].astype('Int64')  # Pandas nullable integer
+    
+    # Ensure boolean columns are proper boolean type
+    boolean_columns = [col for col in df_final.columns if col.startswith('has_') or col == 'is_year_round']
+    for col in boolean_columns:
+        if col in df_final.columns:
+            df_final[col] = df_final[col].astype(bool)
+    
+    print(f"Processed {len(numeric_columns)} numeric columns for PostgreSQL compatibility")
+    print(f"Processed {len(boolean_columns)} boolean columns for PostgreSQL compatibility")
+    
+    # Phase 7: Output and Reporting
+    print("\nPhase 7: Saving Results")
     
     # Save cleaned data
     df_final.to_csv(OUTPUT_PATH, index=False)
@@ -496,8 +684,8 @@ def clean_flower_data():
 def create_cleaning_summary(df, original_rows, duplicates_processed, color_expansions):
     """Create comprehensive cleaning summary"""
     summary = []
-    summary.append("FINAL DATA CLEANING SUMMARY")
-    summary.append("=" * 50)
+    summary.append("FINAL DATA CLEANING SUMMARY WITH NUMERIC SEASONALITY")
+    summary.append("=" * 60)
     summary.append("")
     summary.append(f"Original rows: {original_rows}")
     summary.append(f"Final rows: {len(df)}")
@@ -533,17 +721,63 @@ def create_cleaning_summary(df, original_rows, duplicates_processed, color_expan
         with_price = df['variant_price'].count()
         summary.append(f"Products with prices: {with_price}/{len(df)} ({with_price/len(df)*100:.1f}%)")
     
+    # Check seasonality processing
+    if 'is_year_round' in df.columns:
+        year_round = df['is_year_round'].sum()
+        summary.append(f"Year-round products: {year_round}/{len(df)} ({year_round/len(df)*100:.1f}%)")
+    
+    if 'season_start_month' in df.columns:
+        with_ranges = df['season_start_month'].count()
+        summary.append(f"Products with date ranges: {with_ranges}/{len(df)} ({with_ranges/len(df)*100:.1f}%)")
+    
+    if 'season_range_3_start_month' in df.columns:
+        triple_ranges = df['season_range_3_start_month'].count()
+        summary.append(f"Products with triple ranges: {triple_ranges}/{len(df)} ({triple_ranges/len(df)*100:.1f}%)")
+    
+    summary.append("")
+    summary.append("NEW NUMERIC SEASONALITY COLUMNS:")
+    summary.append("-" * 40)
+    summary.append("✓ season_start_month, season_start_day")
+    summary.append("✓ season_end_month, season_end_day")
+    summary.append("✓ season_range_2_start_month, season_range_2_start_day")
+    summary.append("✓ season_range_2_end_month, season_range_2_end_day")
+    summary.append("✓ season_range_3_start_month, season_range_3_start_day")
+    summary.append("✓ season_range_3_end_month, season_range_3_end_day")
+    summary.append("✓ is_year_round")
+    
     summary.append("")
     summary.append("READY FOR:")
-    summary.append("- PostgreSQL import")
-    summary.append("- Chatbot filtering and recommendations")
-    summary.append("- SQL queries with boolean color columns")
+    summary.append("- PostgreSQL import with 3-range seasonality support")
+    summary.append("- SQL-based date filtering using numeric comparisons")
+    summary.append("- Chatbot filtering with direct SQL queries")
+    summary.append("- High-performance date range queries")
+    summary.append("- Complete seasonality coverage (no data loss)")
     
     # Save summary
     with open('data/final_cleaning_summary.txt', 'w') as f:
         f.write('\n'.join(summary))
     
     print(f"Summary saved to data/final_cleaning_summary.txt")
+    
+    # Print seasonality examples
+    print("\nSeasonality Processing Examples:")
+    print("-" * 40)
+    
+    # Show examples of processed seasonality data
+    if 'seasonality' in df.columns:
+        example_data = df[df['seasonality'].notna()].head(5)
+        for idx, row in example_data.iterrows():
+            original = row.get('seasonality', 'N/A')
+            if row.get('is_year_round', False):
+                processed = "Year-round"
+            else:
+                range1 = f"{row.get('season_start_month', 'N/A')}/{row.get('season_start_day', 'N/A')} - {row.get('season_end_month', 'N/A')}/{row.get('season_end_day', 'N/A')}"
+                range2 = ""
+                if pd.notna(row.get('season_range_2_start_month')):
+                    range2 = f" + {row.get('season_range_2_start_month', 'N/A')}/{row.get('season_range_2_start_day', 'N/A')} - {row.get('season_range_2_end_month', 'N/A')}/{row.get('season_range_2_end_day', 'N/A')}"
+                processed = range1 + range2
+            
+            print(f"'{original}' → {processed}")
 
 def main():
     """Main execution function"""
@@ -551,18 +785,22 @@ def main():
         cleaned_df = clean_flower_data()
         
         if cleaned_df is not None:
-            print("\n" + "=" * 50)
-            print("DATA CLEANING COMPLETED SUCCESSFULLY!")
-            print("=" * 50)
+            print("\n" + "=" * 60)
+            print("DATA CLEANING WITH NUMERIC SEASONALITY COMPLETED!")
+            print("=" * 60)
             print(f"Final dataset: {len(cleaned_df)} rows, {len(cleaned_df.columns)} columns")
             print("\nFiles created:")
             print("- data/cleaned_flower_data.csv")
             print("- data/final_cleaning_summary.txt")
-            print("\nDataset is ready for PostgreSQL import and chatbot implementation!")
+            print("\nNew Features:")
+            print("✓ Numeric seasonality columns for SQL date filtering")
+            print("✓ Support for dual date ranges (year-boundary seasons)")
+            print("✓ Year-round product identification")
+            print("\nDataset is ready for PostgreSQL import with enhanced date filtering!")
         else:
-            print("\n" + "=" * 50)
+            print("\n" + "=" * 60)
             print("DATA CLEANING FAILED!")
-            print("=" * 50)
+            print("=" * 60)
             print("Please check the debug output above to understand the issue.")
         
     except Exception as e:

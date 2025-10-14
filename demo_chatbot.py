@@ -23,14 +23,14 @@ ENGINE = create_engine(DB_URI, pool_pre_ping=True)
 # 2) System Prompt (compact but complete)
 # =========================
 SYSTEM_PROMPT = """
-You are an AI that ONLY returns JSON containing a single SQL query to retrieve up to 10 flower products.
+You are an AI that ONLY returns JSON containing a single SQL query to retrieve up to 6 flower products.
 Return exactly: {"sql": "<final SQL>"} — no other text.
 
 DATABASE (PostgreSQL) TABLE: flowers
 Columns include (not exhaustive):
 - unique_id (PK, text), product_name, variant_name, description_clean, variant_price (numeric)
 - group_category, subgroup_category, product_type_all_flowers, recipe_metafield
-- holiday_occasion, diy_level
+- holiday_occasion, diy_level, non_color_options
 - colors_raw (string), has_red, has_pink, has_white, has_yellow, has_orange, has_purple, has_blue, has_green (booleans)
 - seasonality (text)
 - season_start_month, season_start_day, season_end_month, season_end_day
@@ -41,15 +41,8 @@ Columns include (not exhaustive):
 
 EXECUTION DISCIPLINE
 - Build the SQL in ONE SHOT, no retries.
-- Use <= 10 rows.
-- Prefer selecting the specific columns needed for display:
-  unique_id, product_name, variant_name, description_clean, variant_price,
-  colors_raw, diy_level, product_type_all_flowers, group_category,
-  recipe_metafield, holiday_occasion, is_year_round,
-  season_start_month, season_start_day, season_end_month, season_end_day,
-  season_range_2_start_month, season_range_2_start_day, season_range_2_end_month, season_range_2_end_day,
-  season_range_3_start_month, season_range_3_start_day, season_range_3_end_month, season_range_3_end_day
-- DO NOT use ORDER BY RANDOM().
+- Use <= 6 rows.
+- ensure variety by DISTINCT ON (product_name).
 
 UNIVERSAL NULL HANDLING RULE
 - If the user explicitly specifies a preference on a column, add "AND <column> IS NOT NULL".
@@ -122,10 +115,10 @@ FAST RESULT SELECTION (NO ORDER BY RANDOM())
 - Use a window-function sampler to pick a random start without OFFSET variables:
   -- Replace <FILTERS> with the combined WHERE conditions.
   WITH filtered AS (
-    SELECT
+    SELECT DISTINCT ON (product_name)
       unique_id, product_name, variant_name, description_clean, variant_price,
       colors_raw, diy_level, product_type_all_flowers, group_category,
-      recipe_metafield, holiday_occasion, is_year_round,
+      recipe_metafield, holiday_occasion, is_year_round, non_color_options,
       season_start_month, season_start_day, season_end_month, season_end_day,
       season_range_2_start_month, season_range_2_start_day, season_range_2_end_month, season_range_2_end_day,
       season_range_3_start_month, season_range_3_start_day, season_range_3_end_month, season_range_3_end_day
@@ -139,20 +132,20 @@ FAST RESULT SELECTION (NO ORDER BY RANDOM())
     FROM filtered f
   ),
   params AS (
-    SELECT FLOOR(random() * GREATEST(0, c - 10))::int AS r
+    SELECT FLOOR(random() * GREATEST(0, c - 6))::int AS r
     FROM numbered
     LIMIT 1
   )
   SELECT *
   FROM numbered n
   CROSS JOIN params p
-  WHERE n.rn > p.r AND n.rn <= p.r + 10;
+  WHERE n.rn > p.r AND n.rn <= p.r + 6;
 
 CONSTRAINTS
 - Use correct column names exactly as listed.
-- Combine filters using correct AND/OR (especially color “and” vs “or”).
+- Combine filters using correct AND/OR (especially color "and" vs "or").
 - Respect NULL-handling rule.
-- Limit to <= 10 rows (window sampler does this).
+- Limit to <= 6 rows (window sampler does this).
 - Return ONLY valid JSON with key "sql".
 """
 
@@ -164,7 +157,7 @@ llm = ChatOpenAI(
     temperature=0,
     openai_api_key=OPENAI_API_KEY,
     timeout=12,     # keep snappy
-    max_retries=0,  # no client retries
+    max_retries=1,  # no client retries
 )
 
 # =========================
@@ -210,12 +203,13 @@ def format_availability(row: Dict[str, Any]) -> Optional[str]:
 
 def render_rows(rows: List[Dict[str, Any]]) -> str:
     if not rows:
-        return "I couldn’t find matching products. Want me to loosen a filter or try alternatives?"
+        return "I couldn't find matching products. Want me to loosen a filter or try alternatives?"
 
     out_lines = []
-    out_lines.append(f"Here are {min(len(rows), 10)} products that match your request:\n")
-    for i, r in enumerate(rows[:10], start=1):
+    out_lines.append(f"Here are {min(len(rows), 6)} recommendations I have:\n")
+    for i, r in enumerate(rows[:6], start=1):
         name = first_nonempty(r, ["product_name"]) or "(Unnamed product)"
+        variant = first_nonempty(r, ["variant_name"])
         price = first_nonempty(r, ["variant_price"])
         colors = first_nonempty(r, ["colors_raw"])
         effort = first_nonempty(r, ["diy_level"])
@@ -223,10 +217,17 @@ def render_rows(rows: List[Dict[str, Any]]) -> str:
         recipe = first_nonempty(r, ["recipe_metafield"])
         occ = first_nonempty(r, ["holiday_occasion"])
         avail = format_availability(r) or (first_nonempty(r, ["seasonality"]) or None)
+        non_color_opts = first_nonempty(r, ["non_color_options"])
 
-        out_lines.append(f"{i}. **{name}**")
+        # Display product name with variant if available
+        display_name = name
+        if variant and variant.lower() != name.lower():
+            display_name = f"{name} - {variant}"
+
+        out_lines.append(f"{i}. **{display_name}**")
         if price:  out_lines.append(f"   - Price: ${price}")
         if colors: out_lines.append(f"   - Colors: {colors}")
+        if non_color_opts: out_lines.append(f"   - Options: {non_color_opts}")
         if effort: out_lines.append(f"   - Effort Level: {effort}")
         if ptype:  out_lines.append(f"   - Product Type: {ptype}")
         if recipe: out_lines.append(f"   - Recipe: {recipe}")
@@ -298,19 +299,20 @@ class FlowerConsultant:
         t_render = time.perf_counter() - t0
 
         # Print the answer
-        print("\nBot:\n" + answer + "\n")
-
+        print("\nFlower Assistant:\n" + answer + "\n")
+        print("7. Book a consultation with a floral expert for personalized help:")
+        print("https://fiftyflowers.com/products/personal-consultation-with-our-wedding-floral-expert?srsltid=AfmBOoqMQEmMIGbvgWhzct-LJYQY_yQ_d9_F8x4rpjJhrxa2-47Rfh51" + "\n")
         # Timings
-        print("TIMINGS:")
-        print(f"  LLM (build SQL): {t_llm:.3f}s")
-        print(f"  SQL exec+fetch  : {t_sql:.3f}s")
-        print(f"  Render (python) : {t_render:.3f}s")
-        print(f"  TOTAL           : {t_llm + t_sql + t_render:.3f}s\n")
+        # print("TIMINGS:")
+        # print(f"  LLM (build SQL): {t_llm:.3f}s")
+        # print(f"  SQL exec+fetch  : {t_sql:.3f}s")
+        # print(f"  Render (python) : {t_render:.3f}s")
+        # print(f"  TOTAL           : {t_llm + t_sql + t_render:.3f}s\n")
 
         # (Optional) Log SQL for debugging
-        print("SQL USED:")
-        print(sql)
-        print()
+        # print("SQL USED:")
+        # print(sql)
+        # print()
 
 # =========================
 # 6) Main

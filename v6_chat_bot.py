@@ -49,6 +49,12 @@ class MemoryState:
         self.quantity = None  # Number of stems, bouquets, etc.
         self.product_type = None  # "bouquet", "centerpiece", etc.
         self.color_logic = "AND"  # "AND" or "OR" for multiple colors
+        # Negative preferences - things user specifically doesn't want
+        self.exclude_colors = []
+        self.exclude_flower_types = []
+        self.exclude_occasions = []
+        self.exclude_effort_levels = []
+        self.exclude_product_types = []
         
     def to_dict(self):
         """Convert to dictionary for JSON serialization"""
@@ -61,7 +67,12 @@ class MemoryState:
             "season": self.season,
             "quantity": self.quantity,
             "product_type": self.product_type,
-            "color_logic": self.color_logic
+            "color_logic": self.color_logic,
+            "exclude_colors": self.exclude_colors,
+            "exclude_flower_types": self.exclude_flower_types,
+            "exclude_occasions": self.exclude_occasions,
+            "exclude_effort_levels": self.exclude_effort_levels,
+            "exclude_product_types": self.exclude_product_types
         }
     
     def update_from_dict(self, data: dict):
@@ -97,6 +108,16 @@ class MemoryState:
                     self.quantity = None
                 elif field_name == "product_type":
                     self.product_type = None
+                elif field_name == "exclude_colors":
+                    self.exclude_colors = []
+                elif field_name == "exclude_flower_types":
+                    self.exclude_flower_types = []
+                elif field_name == "exclude_occasions":
+                    self.exclude_occasions = []
+                elif field_name == "exclude_effort_levels":
+                    self.exclude_effort_levels = []
+                elif field_name == "exclude_product_types":
+                    self.exclude_product_types = []
         
         # Handle regular updates
         if "colors" in data and not data["colors"] is None:
@@ -117,6 +138,18 @@ class MemoryState:
             self.product_type = data["product_type"]
         if "color_logic" in data and data["color_logic"]:
             self.color_logic = data["color_logic"]
+        
+        # Handle exclude fields
+        if "exclude_colors" in data and not data["exclude_colors"] is None:
+            self.exclude_colors = data["exclude_colors"] if data["exclude_colors"] else []
+        if "exclude_flower_types" in data and not data["exclude_flower_types"] is None:
+            self.exclude_flower_types = data["exclude_flower_types"] if data["exclude_flower_types"] else []
+        if "exclude_occasions" in data and not data["exclude_occasions"] is None:
+            self.exclude_occasions = data["exclude_occasions"] if data["exclude_occasions"] else []
+        if "exclude_effort_levels" in data and not data["exclude_effort_levels"] is None:
+            self.exclude_effort_levels = data["exclude_effort_levels"] if data["exclude_effort_levels"] else []
+        if "exclude_product_types" in data and not data["exclude_product_types"] is None:
+            self.exclude_product_types = data["exclude_product_types"] if data["exclude_product_types"] else []
 
 # =========================
 # 3) Parser LLM (Memory Updates)
@@ -134,7 +167,12 @@ Return ONLY valid JSON with the following structure:
   "season": "spring",  // Season or specific date like "May 15"
   "quantity": "100 stems",  // Quantity mentioned
   "product_type": "bouquet",  // Product type mentioned
-  "color_logic": "AND"  // "AND" if colors should be combined, "OR" if alternatives
+  "color_logic": "AND",  // "AND" if colors should be combined, "OR" if alternatives
+  "exclude_colors": ["pink"],  // Colors user specifically doesn't want
+  "exclude_flower_types": ["rose"],  // Flower types user doesn't want
+  "exclude_occasions": ["wedding"],  // Occasions user doesn't want
+  "exclude_effort_levels": ["DIY From Scratch"],  // Effort levels user doesn't want
+  "exclude_product_types": ["centerpiece"]  // Product types user doesn't want
 }
 
 RULES:
@@ -151,6 +189,9 @@ RULES:
 - For filter removal: "remove colors" → {"REMOVE_colors": true}, "clear budget" → {"REMOVE_budget": true}, "no season" → {"REMOVE_season": true}
 - For "remove all filters" or "clear everything" → {"REMOVE_all": true}
 - For "don't want colors anymore" → {"REMOVE_colors": true}
+- For negative preferences: "don't want pink" → {"exclude_colors": ["pink"]}, "no roses" → {"exclude_flower_types": ["rose"]}
+- For "avoid expensive" → {"exclude_effort_levels": ["DIY From Scratch"]}, "not DIY" → {"exclude_effort_levels": ["DIY From Scratch"]}
+- For "no centerpieces" → {"exclude_product_types": ["centerpiece"]}, "avoid weddings" → {"exclude_occasions": ["wedding"]}
 - Leave fields as null/empty if not mentioned
 - Return ONLY the JSON, no other text
 """
@@ -502,6 +543,45 @@ def build_sql_from_memory(memory: MemoryState) -> str:
             
             conditions.append(f"({color_clause} AND colors_raw IS NOT NULL)")
     
+    # Exclude color filtering
+    if memory.exclude_colors:
+        exclude_color_conditions = []
+        for color in memory.exclude_colors:
+            color_lower = color.lower()
+            
+            # Handle color phrases for exclusion
+            if "cool colors" in color_lower or "cool tones" in color_lower:
+                exclude_color_conditions.append("(has_blue = false AND has_purple = false AND has_green = false)")
+            elif "warm colors" in color_lower or "warm tones" in color_lower:
+                exclude_color_conditions.append("(has_red = false AND has_orange = false AND has_yellow = false)")
+            elif "neutral colors" in color_lower or "neutral tones" in color_lower:
+                exclude_color_conditions.append("(has_white = false AND has_pink = false)")
+            # Basic colors using boolean columns
+            elif color_lower == "red":
+                exclude_color_conditions.append("has_red = false")
+            elif color_lower == "pink":
+                exclude_color_conditions.append("has_pink = false")
+            elif color_lower == "white":
+                exclude_color_conditions.append("has_white = false")
+            elif color_lower == "yellow":
+                exclude_color_conditions.append("has_yellow = false")
+            elif color_lower == "orange":
+                exclude_color_conditions.append("has_orange = false")
+            elif color_lower == "purple":
+                exclude_color_conditions.append("has_purple = false")
+            elif color_lower == "blue":
+                exclude_color_conditions.append("has_blue = false")
+            elif color_lower == "green":
+                exclude_color_conditions.append("has_green = false")
+            else:
+                # For colors not covered by booleans, exclude from colors_raw
+                color_escaped = color_lower.replace("'", "''")
+                exclude_color_conditions.append(f"LOWER(colors_raw) NOT LIKE '%{color_escaped}%'")
+        
+        if exclude_color_conditions:
+            exclude_clause = " AND ".join(exclude_color_conditions)
+            conditions.append(f"({exclude_clause})")
+    
     # Flower type filtering
     if memory.flower_types:
         flower_conditions = []
@@ -516,6 +596,21 @@ def build_sql_from_memory(memory: MemoryState) -> str:
         
         if flower_conditions:
             conditions.append(f"({' OR '.join(flower_conditions)})")
+    
+    # Exclude flower type filtering
+    if memory.exclude_flower_types:
+        exclude_flower_conditions = []
+        for flower in memory.exclude_flower_types:
+            flower_lower = flower.lower()
+            exclude_flower_conditions.append(f"""
+                (LOWER(group_category) NOT LIKE '%{flower_lower}%' AND
+                 LOWER(recipe_metafield) NOT LIKE '%{flower_lower}%' AND
+                 LOWER(product_type_all_flowers) NOT LIKE '%{flower_lower}%' AND
+                 LOWER(product_name) NOT LIKE '%{flower_lower}%')
+            """)
+        
+        if exclude_flower_conditions:
+            conditions.append(f"({' AND '.join(exclude_flower_conditions)})")
     
     # Occasion filtering with JSON mapping support
     if memory.occasions:
@@ -533,6 +628,16 @@ def build_sql_from_memory(memory: MemoryState) -> str:
         if occasion_conditions:
             conditions.append(f"({' OR '.join(occasion_conditions)} AND holiday_occasion IS NOT NULL)")
     
+    # Exclude occasion filtering
+    if memory.exclude_occasions:
+        exclude_occasion_conditions = []
+        for occasion in memory.exclude_occasions:
+            occasion_lower = occasion.lower().replace("'", "''")
+            exclude_occasion_conditions.append(f"LOWER(holiday_occasion) NOT LIKE '%{occasion_lower}%'")
+        
+        if exclude_occasion_conditions:
+            conditions.append(f"({' AND '.join(exclude_occasion_conditions)})")
+    
     # Budget filtering
     if memory.budget.get("max") is not None:
         conditions.append(f"variant_price < {memory.budget['max']} AND variant_price IS NOT NULL")
@@ -546,6 +651,15 @@ def build_sql_from_memory(memory: MemoryState) -> str:
     if memory.effort_level:
         conditions.append(f"diy_level = '{memory.effort_level}' AND diy_level IS NOT NULL")
     
+    # Exclude effort level filtering
+    if memory.exclude_effort_levels:
+        exclude_effort_conditions = []
+        for effort in memory.exclude_effort_levels:
+            exclude_effort_conditions.append(f"diy_level != '{effort}'")
+        
+        if exclude_effort_conditions:
+            conditions.append(f"({' AND '.join(exclude_effort_conditions)})")
+    
     # Product type filtering
     if memory.product_type:
         product_lower = memory.product_type.lower()
@@ -554,6 +668,19 @@ def build_sql_from_memory(memory: MemoryState) -> str:
              LOWER(product_type_all_flowers) LIKE '%{product_lower}%')
             AND (product_name IS NOT NULL OR product_type_all_flowers IS NOT NULL)
         """)
+    
+    # Exclude product type filtering
+    if memory.exclude_product_types:
+        exclude_product_conditions = []
+        for product_type in memory.exclude_product_types:
+            product_lower = product_type.lower()
+            exclude_product_conditions.append(f"""
+                (LOWER(product_name) NOT LIKE '%{product_lower}%' AND 
+                 LOWER(product_type_all_flowers) NOT LIKE '%{product_lower}%')
+            """)
+        
+        if exclude_product_conditions:
+            conditions.append(f"({' AND '.join(exclude_product_conditions)})")
     
     # Quantity filtering
     if memory.quantity:
@@ -651,6 +778,14 @@ def render_rows(rows: List[Dict[str, Any]]) -> str:
     if not rows:
         return "I couldn't find matching products with those exact criteria. Try:\n• Removing some filters (like budget or season)\n• Using broader terms (e.g., 'flowers' instead of specific types)\n• Checking if the date/season is valid\n\nWant me to show you some general options instead?"
 
+    # Add seasonality breakdown for debugging
+    seasonal_count = sum(1 for r in rows if not r.get('is_year_round', True))
+    year_round_count = len(rows) - seasonal_count
+    
+    seasonality_info = ""
+    if seasonal_count > 0:
+        seasonality_info = f"\n📊 Seasonality: {seasonal_count} seasonal, {year_round_count} year-round products"
+
     out_lines = []
     out_lines.append(f"Here are {min(len(rows), 6)} recommendations I have:\n")
     for i, r in enumerate(rows[:6], start=1):
@@ -685,6 +820,9 @@ def render_rows(rows: List[Dict[str, Any]]) -> str:
             short = (desc[:180] + "…") if len(desc) > 180 else desc
             out_lines.append(f"   - Description: {short}")
         out_lines.append("")  # blank line between items
+    
+    # Add seasonality info at the end
+    out_lines.append(seasonality_info)
     return "\n".join(out_lines)
 
 # This function is replaced by the memory-based system

@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FiftyFlowers AI Assistant - Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #fff5f9 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+            width: 100%;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #e91e63 0%, #f06292 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header .logo {
+            font-size: 32px;
+        }
+
+        .reset-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .reset-btn:hover {
+            background: white;
+            color: #e91e63;
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .chat-area {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar {
+            flex: 1;
+            background: #f8f9fa;
+            border-left: 1px solid #e0e0e0;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar h3 {
+            font-size: 16px;
+            color: #e91e63;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .filter-item {
+            background: linear-gradient(135deg, #fff 0%, #fef5f9 100%);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ffd4e5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s, opacity 0.2s, transform 0.2s;
+        }
+
+        .filter-item:hover {
+            border-color: #e91e63;
+            box-shadow: 0 2px 8px rgba(233, 30, 99, 0.15);
+        }
+
+        .filter-content {
+            flex: 1;
+        }
+
+        .filter-item strong {
+            color: #e91e63;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .filter-item span {
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .filter-item.exclude {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+            border-color: #ffcccb;
+        }
+        
+        .filter-item.exclude:hover {
+            border-color: #ff4444;
+        }
+        
+        .filter-item.exclude strong {
+            color: #ff4444;
+        }
+
+        .remove-filter-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .remove-filter-btn:hover {
+            background: #cc0000;
+            transform: scale(1.1);
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            background: #fafafa;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .message.bot {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 18px;
+            line-height: 1.5;
+        }
+
+        .message.bot .message-content {
+            max-width: 95%;
+            padding: 20px;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #e91e63 0%, #f06292 100%);
+            color: white;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .bot .message-content pre {
+            white-space: pre-wrap;
+            font-family: inherit;
+            margin: 0;
+        }
+
+        /* Product Card Styles */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-color: #e91e63;
+        }
+
+        .product-card-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            min-height: 120px;
+        }
+
+        .product-number {
+            display: inline-block;
+            background: #e91e63;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .product-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .product-card-body {
+            padding: 15px;
+        }
+
+        .product-detail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            font-size: 13px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .product-detail:last-child {
+            border-bottom: none;
+        }
+
+        .product-detail-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .product-detail-value {
+            color: #333;
+            font-weight: 600;
+            text-align: right;
+            max-width: 60%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-price {
+            color: #e91e63;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .product-description {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.5;
+            margin-top: 10px;
+            max-height: 3.6em; /* Show ~2 lines */
+            overflow: hidden;
+            position: relative;
+            transition: max-height 0.3s ease;
+        }
+
+        .product-card:hover .product-description {
+            max-height: 500px; /* Expand on hover */
+        }
+
+        .product-description::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 30%;
+            height: 1.2em;
+            background: linear-gradient(to right, transparent, white);
+            pointer-events: none;
+        }
+
+        .product-card:hover .product-description::after {
+            display: none; /* Remove fade when expanded */
+        }
+
+        .consultation-card {
+            background: linear-gradient(135deg, #e91e63 0%, #f06292 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            text-decoration: none;
+            display: block;
+        }
+
+        .consultation-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(233, 30, 99, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .consultation-card h4 {
+            margin-bottom: 8px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .consultation-card p {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 13px;
+            margin: 0;
+        }
+
+        .intro-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .input-area {
+            padding: 20px 30px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 15px;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .input-area input:focus {
+            border-color: #e91e63;
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #e91e63 0%, #f06292 100%);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 25px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(233, 30, 99, 0.3);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .typing-indicator {
+            display: inline-block;
+        }
+
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #e91e63;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .welcome-message h2 {
+            color: #e91e63;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .welcome-message p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .example-queries {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .example-query {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            border: 2px solid #e91e63;
+            color: #e91e63;
+            transition: all 0.3s;
+        }
+
+        .example-query:hover {
+            background: #e91e63;
+            color: white;
+        }
+
+        .no-filters {
+            color: #999;
+            font-size: 14px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><span class="logo">🌸</span> FiftyFlowers AI Assistant</h1>
+            <button class="reset-btn" onclick="resetChat()">Reset Chat</button>
+        </div>
+
+        <div class="main-content">
+            <div class="chat-area">
+                <div class="messages" id="messages">
+                    <div class="welcome-message">
+                        <h2>Welcome to FiftyFlowers!</h2>
+                        <p>I'm your AI flower consultant. I can help you find the perfect flowers for any occasion!</p>
+                        <p><strong>Try asking me:</strong></p>
+                        <div class="example-queries">
+                            <div class="example-query" onclick="sendExample('I want red roses for a wedding')">Red roses for a wedding</div>
+                            <div class="example-query" onclick="sendExample('Show me spring flowers under $100')">Spring flowers under $100</div>
+                            <div class="example-query" onclick="sendExample('I need pink and white flowers for Mother\\'s Day')">Pink flowers for Mother's Day</div>
+                            <div class="example-query" onclick="sendExample('Budget-friendly DIY bouquets')">Budget-friendly DIY bouquets</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <input 
+                        type="text" 
+                        id="userInput" 
+                        placeholder="Ask me about flowers... (e.g., 'I want red roses for a wedding')"
+                        onkeypress="handleKeyPress(event)"
+                    >
+                    <button class="send-btn" onclick="sendMessage()" id="sendBtn">Send</button>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <h3>Active Filters</h3>
+                <div id="filters">
+                    <div class="no-filters">No filters applied yet</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sessionId = 'demo_' + Date.now();
+        
+        // Make scroll wheel work anywhere on the page to scroll the chat
+        document.addEventListener('DOMContentLoaded', function() {
+            const messagesDiv = document.getElementById('messages');
+            
+            // Redirect scroll events from the whole page to the messages area
+            document.addEventListener('wheel', function(e) {
+                // Only redirect if not already scrolling the messages div or sidebar
+                const target = e.target;
+                const isInMessages = messagesDiv.contains(target) || target === messagesDiv;
+                const isInSidebar = target.closest('.sidebar');
+                
+                if (!isInMessages && !isInSidebar) {
+                    e.preventDefault();
+                    messagesDiv.scrollTop += e.deltaY;
+                }
+            }, { passive: false });
+        });
+
+        function formatBotResponse(text) {
+            // Parse the bot's response and create product cards
+            const lines = text.split('\n');
+            let html = '';
+            let products = [];
+            let currentProduct = null;
+            let inProductList = false;
+            let consultationLink = '';
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                // Check for intro text (e.g., "Here are 6 recommendations")
+                if (line.match(/^Here are \d+ recommendations/i)) {
+                    html += `<div class="intro-text">${line}</div>`;
+                    inProductList = true;
+                    continue;
+                }
+                
+                // Check for product number (e.g., "1. **Product Name**")
+                const productMatch = line.match(/^(\d+)\.\s+\*\*(.+?)\*\*/);
+                if (productMatch) {
+                    if (currentProduct) {
+                        products.push(currentProduct);
+                    }
+                    currentProduct = {
+                        number: productMatch[1],
+                        name: productMatch[2],
+                        details: []
+                    };
+                    continue;
+                }
+                
+                // Check for product details (e.g., "   - Price: $99.99")
+                const detailMatch = line.match(/^\s*-\s+([^:]+):\s*(.+)$/);
+                if (detailMatch && currentProduct) {
+                    currentProduct.details.push({
+                        label: detailMatch[1].trim(),
+                        value: detailMatch[2].trim()
+                    });
+                    continue;
+                }
+                
+                // Check for consultation link
+                if (line.match(/Book a consultation/i)) {
+                    consultationLink = lines[i + 1] ? lines[i + 1].trim() : '';
+                    break;
+                }
+                
+                // Check for seasonality info
+                if (line.match(/Seasonality:/)) {
+                    html += `<div style="margin-top: 15px; padding: 10px; background: #f0f0f0; border-radius: 8px; font-size: 13px; color: #666;">${line}</div>`;
+                    continue;
+                }
+                
+                // Check for error messages
+                if (line.match(/I couldn't find matching products/)) {
+                    html += `<div style="padding: 20px; background: #fff3cd; border-radius: 8px; color: #856404;">${text}</div>`;
+                    return html;
+                }
+            }
+            
+            // Add last product
+            if (currentProduct) {
+                products.push(currentProduct);
+            }
+            
+            // Create product grid
+            if (products.length > 0) {
+                html += '<div class="product-grid">';
+                
+                for (const product of products) {
+                    // Find description first
+                    const descriptionDetail = product.details.find(d => d.label === 'Description');
+                    const otherDetails = product.details.filter(d => d.label !== 'Description');
+                    
+                    html += `
+                        <div class="product-card">
+                            <div class="product-card-header">
+                                <div class="product-number">${product.number}</div>
+                                <h3 class="product-name">${product.name}</h3>
+                    `;
+                    
+                    // Add description right after product name
+                    if (descriptionDetail) {
+                        html += `<div class="product-description">${descriptionDetail.value}</div>`;
+                    }
+                    
+                    html += `
+                            </div>
+                            <div class="product-card-body">
+                    `;
+                    
+                    // Add other details
+                    for (const detail of otherDetails) {
+                        const valueClass = detail.label === 'Price' ? 'product-price' : 'product-detail-value';
+                        
+                        // Replace semicolons with bullet separators for better UI
+                        let displayValue = detail.value.replace(/;/g, ' • ');
+                        
+                        html += `
+                            <div class="product-detail">
+                                <span class="product-detail-label">${detail.label}</span>
+                                <span class="${valueClass}">${displayValue}</span>
+                            </div>
+                        `;
+                    }
+                    
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                html += '</div>';
+            }
+            
+            // Add consultation card
+            if (consultationLink) {
+                html += `
+                    <a href="${consultationLink}" target="_blank" class="consultation-card">
+                        <h4>Need personalized help?</h4>
+                        <p>Book a consultation with our floral expert →</p>
+                    </a>
+                `;
+            }
+            
+            return html || `<pre>${text}</pre>`;
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendExample(text) {
+            document.getElementById('userInput').value = text;
+            sendMessage();
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            // Clear input
+            input.value = '';
+
+            // Add user message to chat
+            addMessage(message, 'user');
+
+            // Show loading indicator inside messages
+            showTypingIndicator();
+            document.getElementById('sendBtn').disabled = true;
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: sessionId
+                    })
+                });
+
+                const data = await response.json();
+
+                // Hide loading
+                hideTypingIndicator();
+
+                // Add bot response
+                addMessage(data.response, 'bot');
+
+                // Update filters
+                updateFilters(data.memory);
+                
+                // Scroll back to the last user message to show context
+                setTimeout(() => {
+                    const userMessages = document.querySelectorAll('.message.user');
+                    if (userMessages.length > 0) {
+                        const lastUserMessage = userMessages[userMessages.length - 1];
+                        lastUserMessage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 100);
+
+            } catch (error) {
+                console.error('Error:', error);
+                hideTypingIndicator();
+                addMessage('Sorry, there was an error processing your request.', 'bot');
+            } finally {
+                document.getElementById('sendBtn').disabled = false;
+            }
+        }
+
+        function showTypingIndicator() {
+            const messagesDiv = document.getElementById('messages');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typing-indicator-container';
+            typingDiv.className = 'message bot';
+            typingDiv.innerHTML = `
+                <div class="message-content" style="padding: 12px 18px;">
+                    <div class="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
+            messagesDiv.appendChild(typingDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const typingDiv = document.getElementById('typing-indicator-container');
+            if (typingDiv) {
+                typingDiv.remove();
+            }
+        }
+
+        function addMessage(text, sender) {
+            const messagesDiv = document.getElementById('messages');
+            
+            // Remove welcome message if it exists
+            const welcome = messagesDiv.querySelector('.welcome-message');
+            if (welcome) {
+                welcome.remove();
+            }
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            
+            if (sender === 'bot') {
+                // Parse and render bot response as product cards
+                contentDiv.innerHTML = formatBotResponse(text);
+            } else {
+                contentDiv.textContent = text;
+            }
+            
+            messageDiv.appendChild(contentDiv);
+            messagesDiv.appendChild(messageDiv);
+            
+            // Only scroll for user messages
+            if (sender === 'user') {
+                messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            // Bot messages don't auto-scroll - user can scroll manually to see them
+        }
+
+        function updateFilters(memory) {
+            const filtersDiv = document.getElementById('filters');
+            filtersDiv.innerHTML = '';
+
+            // Skip technical fields that users don't need to see
+            const skipFields = ['color_logic'];
+            
+            // Filter out empty values and technical fields
+            const cleanedMemory = {};
+            for (const [key, value] of Object.entries(memory || {})) {
+                if (skipFields.includes(key)) continue;
+                if (value && value !== [] && value !== {'min': null, 'max': null, 'around': null}) {
+                    cleanedMemory[key] = value;
+                }
+            }
+
+            if (Object.keys(cleanedMemory).length === 0) {
+                filtersDiv.innerHTML = '<div class="no-filters">No filters applied yet</div>';
+                return;
+            }
+
+            const filterLabels = {
+                'colors': 'Colors',
+                'flower_types': 'Flower Types',
+                'occasions': 'Occasions',
+                'budget': 'Budget',
+                'effort_level': 'Effort Level',
+                'season': 'Season',
+                'quantity': 'Quantity',
+                'product_type': 'Product Type',
+                'exclude_colors': 'Exclude Colors',
+                'exclude_flower_types': 'Exclude Flowers',
+                'exclude_occasions': 'Exclude Occasions',
+                'exclude_effort_levels': 'Exclude Effort',
+                'exclude_product_types': 'Exclude Types'
+            };
+
+            const removeCommands = {
+                'colors': 'remove colors',
+                'flower_types': 'remove flowers',
+                'occasions': 'remove occasion',
+                'budget': 'clear budget',
+                'effort_level': 'clear effort',
+                'season': 'clear season',
+                'quantity': 'clear quantity',
+                'product_type': 'clear product type',
+                'exclude_colors': 'clear exclude colors',
+                'exclude_flower_types': 'clear exclude flowers',
+                'exclude_occasions': 'clear exclude occasions',
+                'exclude_effort_levels': 'clear exclude effort',
+                'exclude_product_types': 'clear exclude product types'
+            };
+
+            for (const [key, value] of Object.entries(cleanedMemory)) {
+                const filterItem = document.createElement('div');
+                // Add 'exclude' class for exclude filters
+                filterItem.className = key.startsWith('exclude_') ? 'filter-item exclude' : 'filter-item';
+                
+                const label = filterLabels[key] || key;
+                let displayValue = value;
+                
+                if (Array.isArray(value)) {
+                    displayValue = value.join(', ');
+                } else if (typeof value === 'object') {
+                    // Format budget nicely
+                    if (value.min && value.max) {
+                        displayValue = `$${value.min} - $${value.max}`;
+                    } else if (value.max) {
+                        displayValue = `Under $${value.max}`;
+                    } else if (value.min) {
+                        displayValue = `Over $${value.min}`;
+                    } else if (value.around) {
+                        displayValue = `Around $${value.around}`;
+                    } else {
+                        displayValue = JSON.stringify(value);
+                    }
+                }
+                
+                const removeCommand = removeCommands[key];
+                
+                filterItem.innerHTML = `
+                    <div class="filter-content">
+                        <strong>${label}</strong>
+                        <span>${displayValue}</span>
+                    </div>
+                    <button class="remove-filter-btn" onclick="removeFilter('${removeCommand}', this)" title="Remove this filter">✕</button>
+                `;
+                
+                filtersDiv.appendChild(filterItem);
+            }
+        }
+
+        async function removeFilter(command, buttonElement) {
+            // Immediately remove the filter card from UI for instant feedback
+            const filterCard = buttonElement.closest('.filter-item');
+            if (filterCard) {
+                filterCard.style.opacity = '0';
+                filterCard.style.transform = 'scale(0.8)';
+                setTimeout(() => filterCard.remove(), 200);
+            }
+            
+            // Send the remove command as a message
+            const input = document.getElementById('userInput');
+            input.value = command;
+            await sendMessage();
+            
+            // After removing, check if all filters are now empty
+            // If so, show fresh results
+            setTimeout(checkAndRefreshIfEmpty, 500);
+        }
+        
+        function checkAndRefreshIfEmpty() {
+            const filtersDiv = document.getElementById('filters');
+            const noFilters = filtersDiv.querySelector('.no-filters');
+            
+            // If we now have no filters, reset to welcome screen
+            if (noFilters) {
+                resetChat();
+            }
+        }
+
+        async function resetChat() {
+            // No confirmation needed - just reset
+
+            try {
+                await fetch('/reset', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        session_id: sessionId
+                    })
+                });
+
+                // Clear messages
+                const messagesDiv = document.getElementById('messages');
+                messagesDiv.innerHTML = `
+                    <div class="welcome-message">
+                        <h2>Welcome to FiftyFlowers!</h2>
+                        <p>I'm your AI flower consultant. I can help you find the perfect flowers for any occasion!</p>
+                        <p><strong>Try asking me:</strong></p>
+                        <div class="example-queries">
+                            <div class="example-query" onclick="sendExample('I want red roses for a wedding')">Red roses for a wedding</div>
+                            <div class="example-query" onclick="sendExample('Show me spring flowers under $100')">Spring flowers under $100</div>
+                            <div class="example-query" onclick="sendExample('I need pink and white flowers for Mother\\'s Day')">Pink flowers for Mother's Day</div>
+                            <div class="example-query" onclick="sendExample('Budget-friendly DIY bouquets')">Budget-friendly DIY bouquets</div>
+                        </div>
+                    </div>
+                `;
+
+                // Clear filters
+                updateFilters({});
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to reset chat');
+            }
+        }
+    </script>
+</body>
+</html>

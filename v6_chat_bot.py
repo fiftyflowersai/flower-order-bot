@@ -178,6 +178,7 @@ Return ONLY valid JSON with the following structure:
 RULES:
 - Only include fields that are explicitly mentioned or can be clearly inferred
 - For budget: "under $50" → {"max": 50}, "$50-$100" → {"min": 50, "max": 100}, "around $75" → {"around": 75}
+- For budget keywords: "budget-friendly" or "affordable" or "cheap" → {"max": 150}, "expensive" or "premium" or "luxury" → {"min": 300}
 - For colors: "red and white" → ["red", "white"] with "AND", "red or white" → ["red", "white"] with "OR"
 - For color phrases: "cool colors" → ["cool colors"], "warm colors" → ["warm colors"], "neutral colors" → ["neutral colors"]
 - For seasons: "spring" → "spring", "summer" → "summer", "fall" → "fall", "winter" → "winter"
@@ -188,13 +189,14 @@ RULES:
 - For occasions: "wedding" → ["wedding"], "birthday" → ["birthday"], "valentine's day" → ["valentine's day"]
 - For filter removal (ONLY when user explicitly says "remove", "clear", "don't want anymore"):
   * "remove colors" or "clear colors" or "don't want colors anymore" → {"REMOVE_colors": true}
-  * "remove budget" or "clear budget" → {"REMOVE_budget": true}
-  * "remove season" or "clear season" or "no season filter" → {"REMOVE_season": true}
+  * "remove budget" or "clear budget" or "don't want budget" → {"REMOVE_budget": true}
+  * "remove season" or "clear season" or "clear spring" or "clear summer" or "clear fall" or "clear winter" or "no season" → {"REMOVE_season": true}
   * "remove occasion" or "clear occasion" or "don't want occasion" → {"REMOVE_occasions": true}
-  * "remove flowers" or "clear flowers" → {"REMOVE_flower_types": true}
-  * "remove effort" or "clear effort" → {"REMOVE_effort_level": true}
+  * "remove flowers" or "clear flowers" or "remove flower types" → {"REMOVE_flower_types": true}
+  * "remove effort" or "clear effort" or "clear effort level" → {"REMOVE_effort_level": true}
   * "remove product type" or "clear product type" → {"REMOVE_product_type": true}
   * "remove all" or "clear all" or "clear everything" or "reset" → {"REMOVE_all": true}
+- CRITICAL: "clear season", "remove season", and "no season" should ALWAYS be {"REMOVE_season": true}, NOT {"season": null}
 - IMPORTANT: "for a wedding" means ADD occasions: ["wedding"], NOT remove it!
 - For negative preferences: "don't want pink" → {"exclude_colors": ["pink"]}, "no roses" → {"exclude_flower_types": ["rose"]}
 - For "avoid expensive" → {"exclude_effort_levels": ["DIY From Scratch"]}, "not DIY" → {"exclude_effort_levels": ["DIY From Scratch"]}
@@ -785,13 +787,13 @@ def render_rows(rows: List[Dict[str, Any]]) -> str:
     if not rows:
         return "I couldn't find matching products with those exact criteria. Try:\n• Removing some filters (like budget or season)\n• Using broader terms (e.g., 'flowers' instead of specific types)\n• Checking if the date/season is valid\n\nWant me to show you some general options instead?"
 
-    # Add seasonality breakdown for debugging
+    # Add seasonality breakdown (only show when there are seasonal products)
     seasonal_count = sum(1 for r in rows if not r.get('is_year_round', True))
     year_round_count = len(rows) - seasonal_count
     
     seasonality_info = ""
     if seasonal_count > 0:
-        seasonality_info = f"\n📊 Seasonality: {seasonal_count} seasonal, {year_round_count} year-round products"
+        seasonality_info = f"\nSeasonality: {seasonal_count} seasonal, {year_round_count} year-round products"
 
     out_lines = []
     out_lines.append(f"Here are {min(len(rows), 6)} recommendations I have:\n")
@@ -821,11 +823,10 @@ def render_rows(rows: List[Dict[str, Any]]) -> str:
         if recipe: out_lines.append(f"   - Recipe: {recipe}")
         if avail:  out_lines.append(f"   - Availability: {avail}")
         if occ:    out_lines.append(f"   - Occasions: {occ}")
-        # Optional tiny description to keep output tight
+        # Full description (UI will handle truncation with expand-on-hover)
         desc = first_nonempty(r, ["description_clean"])
         if desc:
-            short = (desc[:180] + "…") if len(desc) > 180 else desc
-            out_lines.append(f"   - Description: {short}")
+            out_lines.append(f"   - Description: {desc}")
         out_lines.append("")  # blank line between items
     
     # Add seasonality info at the end
@@ -847,13 +848,15 @@ def run_sql(sql: str) -> (List[Dict[str, Any]], float):
 # 8) CLI wrapper with memory-based system
 # =========================
 class FlowerConsultant:
-    def __init__(self):
+    def __init__(self, debug=False):
         self.count = 0
         self.memory = MemoryState()  # Persistent memory across conversations
+        self.debug = debug  # Control debug output
 
     def ask(self, user_input: str):
         self.count += 1
-        print(f"\nProcessing query #{self.count}...")
+        if self.debug:
+            print(f"\nProcessing query #{self.count}...")
 
         # Step 1: Parse user input and update memory
         try:
@@ -865,7 +868,8 @@ class FlowerConsultant:
             self.memory.update_from_dict(parsed_data)
             
             # Debug: Show current memory state
-            print(f"Memory state: {self.memory.to_dict()}")
+            if self.debug:
+                print(f"Memory state: {self.memory.to_dict()}")
             
         except Exception as e:
             print(f"Error parsing user input: {e}\n")
@@ -895,22 +899,24 @@ class FlowerConsultant:
         t_render = time.perf_counter() - t0
 
         # Print the answer
-        print("\nFlower Assistant:\n" + answer + "\n")
-        print("7. Book a consultation with a floral expert for personalized help:")
-        print("https://fiftyflowers.com/products/personal-consultation-with-our-wedding-floral-expert?srsltid=AfmBOoqMQEmMIGbvgWhzct-LJYQY_yQ_d9_F8x4rpjJhrxa2-47Rfh51" + "\n")
+        print("\nFlower Assistant:")
+        print(answer)
+        print("\n7. Book a consultation with a floral expert for personalized help:")
+        print("https://fiftyflowers.com/products/personal-consultation-with-our-wedding-floral-expert?srsltid=AfmBOoqMQEmMIGbvgWhzct-LJYQY_yQ_d9_F8x4rpjJhrxa2-47Rfh51")
         
         # Timings (optional - uncomment to see)
-        # print("TIMINGS:")
-        # print(f"  Parse (LLM)     : {t_parse:.3f}s")
-        # print(f"  SQL build       : {t_sql_build:.3f}s")
-        # print(f"  SQL exec+fetch  : {t_sql:.3f}s")
-        # print(f"  Render (python) : {t_render:.3f}s")
-        # print(f"  TOTAL           : {t_parse + t_sql_build + t_sql + t_render:.3f}s\n")
+        if self.debug:
+            print("\nTIMINGS:")
+            print(f"  Parse (LLM)     : {t_parse:.3f}s")
+            print(f"  SQL build       : {t_sql_build:.3f}s")
+            print(f"  SQL exec+fetch  : {t_sql:.3f}s")
+            print(f"  Render (python) : {t_render:.3f}s")
+            print(f"  TOTAL           : {t_parse + t_sql_build + t_sql + t_render:.3f}s")
 
-        # (Optional) Log SQL for debugging
-        # print("SQL USED:")
-        # print(sql)
-        # print()
+            # (Optional) Log SQL for debugging
+            print("\nSQL USED:")
+            print(sql)
+            print()
 
 # =========================
 # 6) Main

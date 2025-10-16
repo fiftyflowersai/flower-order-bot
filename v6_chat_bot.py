@@ -119,13 +119,13 @@ class MemoryState:
                 elif field_name == "exclude_product_types":
                     self.exclude_product_types = []
         
-        # Handle regular updates
-        if "colors" in data and not data["colors"] is None:
-            self.colors = data["colors"] if data["colors"] else []
-        if "flower_types" in data and not data["flower_types"] is None:
-            self.flower_types = data["flower_types"] if data["flower_types"] else []
-        if "occasions" in data and not data["occasions"] is None:
-            self.occasions = data["occasions"] if data["occasions"] else []
+        # Handle regular updates - only update if field has actual values (not empty list/None)
+        if "colors" in data and data["colors"]:  # Only update if non-empty
+            self.colors = data["colors"]
+        if "flower_types" in data and data["flower_types"]:  # Only update if non-empty
+            self.flower_types = data["flower_types"]
+        if "occasions" in data and data["occasions"]:  # Only update if non-empty
+            self.occasions = data["occasions"]
         if "budget" in data and data["budget"]:
             self.budget.update(data["budget"])
         if "effort_level" in data and data["effort_level"]:
@@ -139,17 +139,17 @@ class MemoryState:
         if "color_logic" in data and data["color_logic"]:
             self.color_logic = data["color_logic"]
         
-        # Handle exclude fields
-        if "exclude_colors" in data and not data["exclude_colors"] is None:
-            self.exclude_colors = data["exclude_colors"] if data["exclude_colors"] else []
-        if "exclude_flower_types" in data and not data["exclude_flower_types"] is None:
-            self.exclude_flower_types = data["exclude_flower_types"] if data["exclude_flower_types"] else []
-        if "exclude_occasions" in data and not data["exclude_occasions"] is None:
-            self.exclude_occasions = data["exclude_occasions"] if data["exclude_occasions"] else []
-        if "exclude_effort_levels" in data and not data["exclude_effort_levels"] is None:
-            self.exclude_effort_levels = data["exclude_effort_levels"] if data["exclude_effort_levels"] else []
-        if "exclude_product_types" in data and not data["exclude_product_types"] is None:
-            self.exclude_product_types = data["exclude_product_types"] if data["exclude_product_types"] else []
+        # Handle exclude fields - only update if field has actual values
+        if "exclude_colors" in data and data["exclude_colors"]:  # Only update if non-empty
+            self.exclude_colors = data["exclude_colors"]
+        if "exclude_flower_types" in data and data["exclude_flower_types"]:  # Only update if non-empty
+            self.exclude_flower_types = data["exclude_flower_types"]
+        if "exclude_occasions" in data and data["exclude_occasions"]:  # Only update if non-empty
+            self.exclude_occasions = data["exclude_occasions"]
+        if "exclude_effort_levels" in data and data["exclude_effort_levels"]:  # Only update if non-empty
+            self.exclude_effort_levels = data["exclude_effort_levels"]
+        if "exclude_product_types" in data and data["exclude_product_types"]:  # Only update if non-empty
+            self.exclude_product_types = data["exclude_product_types"]
 
 # =========================
 # 3) Parser LLM (Memory Updates)
@@ -186,9 +186,16 @@ RULES:
 - For effort: "ready-made" → "Ready To Go", "DIY kit" → "DIY In A Kit", "from scratch" → "DIY From Scratch"
 - For flower types: "roses" → ["rose"], "lilies" → ["lily"], "peonies" → ["peony"], "carnations" → ["carnation"]
 - For occasions: "wedding" → ["wedding"], "birthday" → ["birthday"], "valentine's day" → ["valentine's day"]
-- For filter removal: "remove colors" → {"REMOVE_colors": true}, "clear budget" → {"REMOVE_budget": true}, "no season" → {"REMOVE_season": true}
-- For "remove all filters" or "clear everything" → {"REMOVE_all": true}
-- For "don't want colors anymore" → {"REMOVE_colors": true}
+- For filter removal (ONLY when user explicitly says "remove", "clear", "don't want anymore"):
+  * "remove colors" or "clear colors" or "don't want colors anymore" → {"REMOVE_colors": true}
+  * "remove budget" or "clear budget" → {"REMOVE_budget": true}
+  * "remove season" or "clear season" or "no season filter" → {"REMOVE_season": true}
+  * "remove occasion" or "clear occasion" or "don't want occasion" → {"REMOVE_occasions": true}
+  * "remove flowers" or "clear flowers" → {"REMOVE_flower_types": true}
+  * "remove effort" or "clear effort" → {"REMOVE_effort_level": true}
+  * "remove product type" or "clear product type" → {"REMOVE_product_type": true}
+  * "remove all" or "clear all" or "clear everything" or "reset" → {"REMOVE_all": true}
+- IMPORTANT: "for a wedding" means ADD occasions: ["wedding"], NOT remove it!
 - For negative preferences: "don't want pink" → {"exclude_colors": ["pink"]}, "no roses" → {"exclude_flower_types": ["rose"]}
 - For "avoid expensive" → {"exclude_effort_levels": ["DIY From Scratch"]}, "not DIY" → {"exclude_effort_levels": ["DIY From Scratch"]}
 - For "no centerpieces" → {"exclude_product_types": ["centerpiece"]}, "avoid weddings" → {"exclude_occasions": ["wedding"]}

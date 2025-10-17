@@ -178,7 +178,9 @@ Return ONLY valid JSON with the following structure:
 RULES:
 - Only include fields that are explicitly mentioned or can be clearly inferred
 - For budget: "under $50" → {"max": 50}, "$50-$100" → {"min": 50, "max": 100}, "around $75" → {"around": 75}
+- IMPORTANT budget rules: "I have a budget of $X" or "my budget is $X" or "budget of $X" → {"max": X} (user wants to stay under)
 - For budget keywords: "budget-friendly" or "affordable" or "cheap" → {"max": 150}, "expensive" or "premium" or "luxury" → {"min": 300}
+- Budget context: When user states a budget amount without "under" or "around", assume they want max budget (under that amount)
 - For colors: "red and white" → ["red", "white"] with "AND", "red or white" → ["red", "white"] with "OR"
 - For color phrases: "cool colors" → ["cool colors"], "warm colors" → ["warm colors"], "neutral colors" → ["neutral colors"]
 - For seasons: "spring" → "spring", "summer" → "summer", "fall" → "fall", "winter" → "winter"

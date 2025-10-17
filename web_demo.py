@@ -2,7 +2,7 @@
 """
 Simple web demo for the flower chatbot
 """
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, make_response
 from v6_chat_bot import FlowerConsultant
 import os
 
@@ -20,7 +20,10 @@ def get_chatbot(session_id="demo"):
 @app.route('/')
 def index():
     """Render the chat interface"""
-    return render_template('chat.html')
+    response = make_response(render_template('chat.html'))
+    # Add header to skip ngrok warning page
+    response.headers['ngrok-skip-browser-warning'] = 'true'
+    return response
 
 @app.route('/chat', methods=['POST'])
 def chat():

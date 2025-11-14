@@ -1,3 +1,27 @@
+"""
+V6 FLOWER CHATBOT - ARCHITECTURE OVERVIEW
+==========================================
+
+This is a memory-based conversational flower recommendation system that:
+1. Parses natural language user input using LLM
+2. Maintains persistent memory state across conversation turns
+3. Builds SQL queries dynamically from memory state
+4. Executes queries against PostgreSQL database
+5. Renders results in a user-friendly format
+
+KEY FEATURES:
+- Persistent memory: Remembers user preferences across multiple messages
+- Filter management: Users can add/remove filters incrementally
+- Negative preferences: Users can exclude specific colors, flower types, etc.
+- Seasonality filtering: Filters products by availability date/season
+- Budget filtering: Supports min, max, and "around" budget constraints
+- Color logic: Supports AND/OR logic for multiple colors
+- Fast querying: Uses window functions for efficient random sampling
+
+ARCHITECTURE FLOW:
+User Input → Parser LLM → Update Memory → Build SQL → Execute Query → Render Results
+"""
+
 import os
 import json
 import time
@@ -9,7 +33,11 @@ from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from sqlalchemy import create_engine, text
 
-# Load color and occasion mappings
+# =========================
+# LOAD MAPPINGS (Color & Occasion Data)
+# =========================
+# These JSON files contain mappings for colors and occasions to help with
+# validation and normalization of user input
 def load_mappings():
     """Load color and occasion mappings from JSON files"""
     try:
@@ -25,31 +53,60 @@ def load_mappings():
 COLOR_MAPPING, OCCASIONS = load_mappings()
 
 # =========================
-# 1) Env & DB
+# 1) ENVIRONMENT & DATABASE SETUP
 # =========================
+# Load environment variables (OpenAI API key)
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+# PostgreSQL database connection string
+# Contains flower product data: names, prices, colors, seasonality, etc.
 DB_URI = "postgresql+psycopg2://postgres:Harrison891%21@localhost:5432/flower_bot_db"
 
-# SQLAlchemy engine (fast direct exec)
+# SQLAlchemy engine for executing SQL queries
+# pool_pre_ping=True ensures connection health checks
 ENGINE = create_engine(DB_URI, pool_pre_ping=True)
 
 # =========================
-# 2) Memory State Management
+# 2) MEMORY STATE MANAGEMENT
 # =========================
+# This class maintains the user's preferences throughout the conversation.
+# Unlike previous versions, this persists across multiple messages, allowing
+# users to build up filters incrementally (e.g., "show me red flowers" then
+# "under $100" then "for a wedding").
 class MemoryState:
-    """Stores user preferences extracted from conversation"""
+    """
+    Stores user preferences extracted from conversation.
+    
+    This is the core of the memory-based system. Each user message updates
+    this state, and SQL queries are built from the current state.
+    
+    KEY DESIGN DECISION: Memory persists across messages, so users can:
+    - Add filters incrementally: "red flowers" → "under $100" → "for wedding"
+    - Remove specific filters: "remove the budget filter"
+    - Clear all filters: "clear everything" or "reset"
+    - Add negative preferences: "I don't want pink" or "no roses"
+    """
     def __init__(self):
-        self.colors = []  # List of colors user wants
-        self.flower_types = []  # List of specific flower types (rose, lily, etc.)
-        self.occasions = []  # List of occasions (wedding, birthday, etc.)
+        # POSITIVE PREFERENCES (things user wants)
+        self.colors = []  # List of colors user wants (e.g., ["red", "white"])
+        self.flower_types = []  # List of specific flower types (e.g., ["rose", "lily"])
+        self.occasions = []  # List of occasions (e.g., ["wedding", "birthday"])
         self.budget = {"min": None, "max": None, "around": None}  # Budget constraints
+        #   - min: minimum price (e.g., {"min": 50} means $50+)
+        #   - max: maximum price (e.g., {"max": 100} means under $100)
+        #   - around: target price ±$20 (e.g., {"around": 75} means $55-$95)
         self.effort_level = None  # "Ready To Go", "DIY In A Kit", "DIY From Scratch"
-        self.season = None  # "spring", "summer", "fall", "winter" or specific date
-        self.quantity = None  # Number of stems, bouquets, etc.
+        self.season = None  # "spring", "summer", "fall", "winter" or specific date like "May 15"
+        self.quantity = None  # Number of stems, bouquets, etc. (e.g., "100 stems")
         self.product_type = None  # "bouquet", "centerpiece", etc.
         self.color_logic = "AND"  # "AND" or "OR" for multiple colors
-        # Negative preferences - things user specifically doesn't want
+        #   - AND: "red and white" means product must have BOTH colors
+        #   - OR: "red or white" means product can have EITHER color
+        
+        # NEGATIVE PREFERENCES (things user specifically doesn't want)
+        # These are separate from positive preferences to allow users to say
+        # things like "I want red flowers but not pink" or "no roses"
         self.exclude_colors = []
         self.exclude_flower_types = []
         self.exclude_occasions = []
@@ -57,7 +114,14 @@ class MemoryState:
         self.exclude_product_types = []
         
     def to_dict(self):
-        """Convert to dictionary for JSON serialization"""
+        """
+        Convert memory state to dictionary for JSON serialization.
+        
+        Used for:
+        - Sending memory state to web frontend (for displaying active filters)
+        - Debugging and logging
+        - API responses
+        """
         return {
             "colors": self.colors,
             "flower_types": self.flower_types,
@@ -76,13 +140,30 @@ class MemoryState:
         }
     
     def update_from_dict(self, data: dict):
-        """Update state from dictionary"""
-        # Handle filter removal commands
+        """
+        Update memory state from a dictionary (typically from LLM parser output).
+        
+        KEY DESIGN DECISION: This method handles two types of updates:
+        1. REMOVE_* commands: Clear specific filters (e.g., {"REMOVE_colors": true})
+        2. Regular updates: Add/update filters (e.g., {"colors": ["red", "white"]})
+        
+        IMPORTANT: Only updates fields that have actual values. This prevents
+        the LLM from accidentally clearing filters by returning empty lists.
+        
+        Example flow:
+        - User says "show me red flowers" → {"colors": ["red"]} → updates colors
+        - User says "remove colors" → {"REMOVE_colors": true} → clears colors
+        - User says "I want white too" → {"colors": ["white"]} → replaces colors (not appends)
+        - User says "clear everything" → {"REMOVE_all": true} → clears all filters
+        """
+        # STEP 1: Handle filter removal commands
+        # These are triggered when user says "remove X", "clear X", "don't want X anymore"
         for key, value in data.items():
             if key.startswith("REMOVE_"):
-                field_name = key[7:]  # Remove "REMOVE_" prefix
+                field_name = key[7:]  # Remove "REMOVE_" prefix (e.g., "REMOVE_colors" → "colors")
+                
                 if field_name == "all":
-                    # Clear everything
+                    # Clear everything - reset to initial state
                     self.colors = []
                     self.flower_types = []
                     self.occasions = []
@@ -92,6 +173,12 @@ class MemoryState:
                     self.quantity = None
                     self.product_type = None
                     self.color_logic = "AND"
+                    # Also clear exclude fields
+                    self.exclude_colors = []
+                    self.exclude_flower_types = []
+                    self.exclude_occasions = []
+                    self.exclude_effort_levels = []
+                    self.exclude_product_types = []
                 elif field_name == "colors":
                     self.colors = []
                 elif field_name == "flower_types":
@@ -119,14 +206,19 @@ class MemoryState:
                 elif field_name == "exclude_product_types":
                     self.exclude_product_types = []
         
-        # Handle regular updates - only update if field has actual values (not empty list/None)
+        # STEP 2: Handle regular updates (adding/updating filters)
+        # CRITICAL: Only update if field has actual values (not empty list/None)
+        # This prevents LLM from accidentally clearing filters by returning {}
+        # or empty lists for fields that weren't mentioned.
+        
         if "colors" in data and data["colors"]:  # Only update if non-empty
-            self.colors = data["colors"]
-        if "flower_types" in data and data["flower_types"]:  # Only update if non-empty
+            self.colors = data["colors"]  # Replace entire list (not append)
+        if "flower_types" in data and data["flower_types"]:
             self.flower_types = data["flower_types"]
-        if "occasions" in data and data["occasions"]:  # Only update if non-empty
+        if "occasions" in data and data["occasions"]:
             self.occasions = data["occasions"]
         if "budget" in data and data["budget"]:
+            # Budget is a dict, so we update it (merging min/max/around)
             self.budget.update(data["budget"])
         if "effort_level" in data and data["effort_level"]:
             self.effort_level = data["effort_level"]
@@ -139,25 +231,38 @@ class MemoryState:
         if "color_logic" in data and data["color_logic"]:
             self.color_logic = data["color_logic"]
         
-        # Handle exclude fields - only update if field has actual values
-        if "exclude_colors" in data and data["exclude_colors"]:  # Only update if non-empty
+        # STEP 3: Handle negative preferences (exclude fields)
+        # These are separate from positive preferences to allow users to say
+        # things like "I want red flowers but not pink"
+        if "exclude_colors" in data and data["exclude_colors"]:
             self.exclude_colors = data["exclude_colors"]
-        if "exclude_flower_types" in data and data["exclude_flower_types"]:  # Only update if non-empty
+        if "exclude_flower_types" in data and data["exclude_flower_types"]:
             self.exclude_flower_types = data["exclude_flower_types"]
-        if "exclude_occasions" in data and data["exclude_occasions"]:  # Only update if non-empty
+        if "exclude_occasions" in data and data["exclude_occasions"]:
             self.exclude_occasions = data["exclude_occasions"]
-        if "exclude_effort_levels" in data and data["exclude_effort_levels"]:  # Only update if non-empty
+        if "exclude_effort_levels" in data and data["exclude_effort_levels"]:
             self.exclude_effort_levels = data["exclude_effort_levels"]
-        if "exclude_product_types" in data and data["exclude_product_types"]:  # Only update if non-empty
+        if "exclude_product_types" in data and data["exclude_product_types"]:
             self.exclude_product_types = data["exclude_product_types"]
 
 # =========================
-# 3) Parser LLM (Memory Updates)
+# 3) PARSER LLM (Memory Updates)
 # =========================
+# This LLM prompt is used to parse user input and extract structured preferences.
+# It converts natural language like "I want red flowers under $100 for a wedding"
+# into a structured JSON format that can update the MemoryState.
+
+# KEY DESIGN DECISION: We use a separate, lightweight LLM (gpt-4o-mini) for parsing
+# instead of having the main LLM generate SQL directly. This separation allows:
+# 1. Faster parsing (smaller, faster model)
+# 2. More reliable structure (always returns JSON)
+# 3. Deterministic SQL building (we control the SQL generation logic)
+# 4. Better error handling (if parsing fails, we can handle it gracefully)
+
 PARSER_PROMPT = """
 You are an AI that extracts user preferences from natural language and updates a memory state.
 
-Return ONLY valid JSON with the following structure:
+Your job is to parse user input and return ONLY valid JSON with the following structure:
 {
   "colors": ["red", "white"],  // List of colors mentioned
   "flower_types": ["rose", "lily"],  // Specific flower types mentioned  
@@ -208,8 +313,18 @@ RULES:
 """
 
 # =========================
-# 4) System Prompt (compact but complete)
+# 4) SYSTEM PROMPT (SQL Generation - NOT CURRENTLY USED)
 # =========================
+# NOTE: This prompt was used in earlier versions where the LLM generated SQL directly.
+# In v6, we use a deterministic SQL builder (build_sql_from_memory) instead.
+# This prompt is kept for reference but is not used in the current implementation.
+
+# KEY DESIGN DECISION: We moved away from LLM-generated SQL because:
+# 1. LLM SQL was inconsistent (sometimes invalid syntax, wrong column names)
+# 2. Deterministic SQL building is faster and more reliable
+# 3. We have full control over the SQL logic (seasonality, color logic, etc.)
+# 4. Easier to debug and maintain
+
 SYSTEM_PROMPT = """
 You are an AI that ONLY returns JSON containing a single SQL query to retrieve up to 6 flower products.
 Return exactly: {"sql": "<final SQL>"} — no other text.
@@ -338,56 +453,107 @@ CONSTRAINTS
 """
 
 # =========================
-# 5) LLM Instances
+# 5) LLM INSTANCES
 # =========================
+# We use OpenAI's ChatOpenAI (via LangChain) for LLM interactions.
+# KEY DESIGN DECISION: Using gpt-4o-mini (smaller, faster model) instead of
+# gpt-4 because:
+# 1. Faster response times (critical for good UX)
+# 2. Lower cost (important for production)
+# 3. Sufficient accuracy for parsing user input (structured JSON output)
+# 4. Temperature=0 for deterministic outputs (same input → same output)
+
+# Main LLM (currently unused - kept for future use or reference)
 llm = ChatOpenAI(
     model="gpt-4o-mini-2024-07-18",
-    temperature=0,
+    temperature=0,  # Deterministic outputs
     openai_api_key=OPENAI_API_KEY,
-    timeout=12,     # keep snappy
-    max_retries=1,  # no client retries
+    timeout=12,     # 12 second timeout (keep snappy)
+    max_retries=1,  # No client retries (fail fast)
 )
 
+# Parser LLM (used for parsing user input into structured JSON)
 parser_llm = ChatOpenAI(
     model="gpt-4o-mini-2024-07-18",
-    temperature=0,
+    temperature=0,  # Deterministic outputs
     openai_api_key=OPENAI_API_KEY,
-    timeout=8,      # even snappier for parsing
-    max_retries=1,
+    timeout=8,      # 8 second timeout (even snappier for parsing)
+    max_retries=1,  # No client retries
 )
 
 # =========================
-# 6) Parser and SQL Builder Functions
+# 6) PARSER AND SQL BUILDER FUNCTIONS
 # =========================
+
 def parse_user_input(user_input: str) -> dict:
-    """Parse user input and extract preferences into structured format"""
+    """
+    Parse user input and extract preferences into structured format.
+    
+    This function uses the parser LLM to convert natural language input
+    into a structured JSON dictionary that can update the MemoryState.
+    
+    Example inputs and outputs:
+    - "I want red flowers" → {"colors": ["red"]}
+    - "under $100" → {"budget": {"max": 100}}
+    - "for a wedding" → {"occasions": ["wedding"]}
+    - "remove the budget filter" → {"REMOVE_budget": true}
+    - "I don't want pink" → {"exclude_colors": ["pink"]}
+    - "clear everything" → {"REMOVE_all": true}
+    
+    Returns:
+        dict: Structured preferences dictionary (empty dict on error)
+    """
     messages = [
         {"role": "system", "content": PARSER_PROMPT.strip()},
         {"role": "user", "content": f"USER_INPUT: {user_input}\n\nExtract preferences:"}
     ]
     
     try:
+        # Call parser LLM to extract preferences
         resp = parser_llm.invoke(messages)
         content = resp.content.strip()
         
         # Parse JSON response
+        # The LLM should return valid JSON like {"colors": ["red"], "budget": {"max": 100}}
         data = json.loads(content)
         return data
     except Exception as e:
+        # If parsing fails, return empty dict (won't update memory)
         print(f"Parser error: {e}")
         return {}
 
 def is_valid_date(month: int, day: int) -> bool:
-    """Validate if a month/day combination is valid"""
+    """
+    Validate if a month/day combination is valid.
+    
+    Used to validate dates parsed from user input before using them in SQL queries.
+    Prevents invalid dates like February 30th or month 13.
+    """
     if not (1 <= month <= 12 and 1 <= day <= 31):
         return False
     
-    # Days per month
-    days_in_month = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]  # Feb has 29 for leap year validation
+    # Days per month (Feb has 29 for leap year validation)
+    days_in_month = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     return day <= days_in_month[month - 1]
 
 def parse_season_to_date(season_input: str) -> tuple:
-    """Parse season/date input to (month, day) tuple"""
+    """
+    Parse season/date input to (month, day) tuple.
+    
+    Converts user input like "spring", "May", "October 15", "5/12" into
+    a (month, day) tuple that can be used for seasonality filtering.
+    
+    Examples:
+    - "spring" → (3, 20)  # March 20 (start of spring)
+    - "summer" → (6, 21)  # June 21 (start of summer)
+    - "May" → (5, 15)     # Mid-month default
+    - "October 15" → (10, 15)
+    - "May 12th" → (5, 12)
+    - "10/15" → (10, 15)
+    
+    Returns:
+        tuple: (month, day) or (None, None) if parsing fails
+    """
     import re
     from datetime import datetime
     
@@ -454,9 +620,36 @@ def parse_season_to_date(season_input: str) -> tuple:
     return (None, None)
 
 def build_seasonality_condition(event_month: int, event_day: int) -> str:
-    """Build the complex seasonality condition for the SQL query"""
+    """
+    Build the complex seasonality condition for the SQL query.
+    
+    The database stores up to 3 season ranges per product:
+    - Range 1: season_start_month/day → season_end_month/day
+    - Range 2: season_range_2_start_month/day → season_range_2_end_month/day
+    - Range 3: season_range_3_start_month/day → season_range_3_end_month/day
+    
+    A product matches if:
+    - It's year-round (is_year_round = TRUE), OR
+    - The event date falls within ANY of the 3 ranges
+    
+    This allows products with complex seasonality (e.g., available in spring
+    and fall but not summer) to be correctly filtered.
+    
+    Args:
+        event_month: Event month (1-12)
+        event_day: Event day (1-31)
+    
+    Returns:
+        str: SQL condition string for WHERE clause
+    """
     
     def build_range_condition(start_month_col, start_day_col, end_month_col, end_day_col):
+        """
+        Build a single range condition.
+        
+        Checks if event_date falls within the range defined by start/end columns.
+        Handles month boundaries correctly (e.g., Dec 15 - Feb 20 spans year boundary).
+        """
         return f"""
             ({start_month_col} < {event_month} OR
              ({start_month_col} = {event_month} AND {start_day_col} <= {event_day}))
@@ -465,11 +658,12 @@ def build_seasonality_condition(event_month: int, event_day: int) -> str:
              ({end_month_col} = {event_month} AND {end_day_col} >= {event_day}))
         """
     
-    # Build the complete seasonality condition with all 3 ranges
+    # Build conditions for all 3 possible ranges
     range1 = build_range_condition('season_start_month', 'season_start_day', 'season_end_month', 'season_end_day')
     range2 = build_range_condition('season_range_2_start_month', 'season_range_2_start_day', 'season_range_2_end_month', 'season_range_2_end_day')
     range3 = build_range_condition('season_range_3_start_month', 'season_range_3_start_day', 'season_range_3_end_month', 'season_range_3_end_day')
     
+    # A product matches if it's year-round OR the event date falls in any range
     return f"""
         (
             is_year_round = TRUE
@@ -480,12 +674,49 @@ def build_seasonality_condition(event_month: int, event_day: int) -> str:
     """
 
 def build_sql_from_memory(memory: MemoryState) -> str:
-    """Build SQL query deterministically from memory state"""
+    """
+    Build SQL query deterministically from memory state.
     
-    # Start building WHERE conditions
+    This is the CORE FUNCTION of v6. It converts the MemoryState into a
+    SQL query that filters the flower products database.
+    
+    KEY DESIGN DECISION: Deterministic SQL building (not LLM-generated) because:
+    1. Reliability: No invalid SQL syntax
+    2. Performance: Faster than LLM generation
+    3. Control: Full control over filtering logic (AND/OR, seasonality, etc.)
+    4. Debuggability: Easy to see exactly what SQL is being generated
+    
+    The function builds a WHERE clause by combining all active filters:
+    - Colors (with AND/OR logic)
+    - Flower types
+    - Occasions
+    - Budget (min/max/around)
+    - Effort level
+    - Product type
+    - Quantity
+    - Seasonality (complex date range logic)
+    - Exclude filters (negative preferences)
+    
+    The final SQL uses a window function approach to randomly sample up to 6
+    distinct products (by product_name) for variety.
+    
+    Args:
+        memory: MemoryState object containing user preferences
+    
+    Returns:
+        str: Complete SQL query string
+    """
+    
+    # Start building WHERE conditions (list of SQL condition strings)
     conditions = []
     
-    # Color filtering with enhanced mapping support
+    # ========== COLOR FILTERING ==========
+    # Supports:
+    # - Basic colors (red, pink, white, etc.) via boolean columns
+    # - Color phrases (cool colors, warm colors, neutral colors)
+    # - Color mappings from JSON file
+    # - AND/OR logic (memory.color_logic)
+    # - Fallback to colors_raw LIKE search for unknown colors
     if memory.colors:
         color_conditions = []
         for color in memory.colors:
@@ -554,7 +785,9 @@ def build_sql_from_memory(memory: MemoryState) -> str:
             
             conditions.append(f"({color_clause} AND colors_raw IS NOT NULL)")
     
-    # Exclude color filtering
+    # ========== EXCLUDE COLOR FILTERING ==========
+    # Negative preferences: User doesn't want certain colors
+    # Example: "I want red flowers but not pink" → exclude_colors: ["pink"]
     if memory.exclude_colors:
         exclude_color_conditions = []
         for color in memory.exclude_colors:
@@ -593,7 +826,11 @@ def build_sql_from_memory(memory: MemoryState) -> str:
             exclude_clause = " AND ".join(exclude_color_conditions)
             conditions.append(f"({exclude_clause})")
     
-    # Flower type filtering
+    # ========== FLOWER TYPE FILTERING ==========
+    # Filters by specific flower types (rose, lily, peony, etc.)
+    # Searches across multiple columns: group_category, recipe_metafield,
+    # product_type_all_flowers, product_name
+    # Uses OR logic (product matches if ANY column contains the flower type)
     if memory.flower_types:
         flower_conditions = []
         for flower in memory.flower_types:
@@ -608,7 +845,9 @@ def build_sql_from_memory(memory: MemoryState) -> str:
         if flower_conditions:
             conditions.append(f"({' OR '.join(flower_conditions)})")
     
-    # Exclude flower type filtering
+    # ========== EXCLUDE FLOWER TYPE FILTERING ==========
+    # Negative preferences: User doesn't want certain flower types
+    # Example: "no roses" → exclude_flower_types: ["rose"]
     if memory.exclude_flower_types:
         exclude_flower_conditions = []
         for flower in memory.exclude_flower_types:
@@ -623,7 +862,10 @@ def build_sql_from_memory(memory: MemoryState) -> str:
         if exclude_flower_conditions:
             conditions.append(f"({' AND '.join(exclude_flower_conditions)})")
     
-    # Occasion filtering with JSON mapping support
+    # ========== OCCASION FILTERING ==========
+    # Filters by occasions (wedding, birthday, valentine's day, etc.)
+    # Uses LIKE search on holiday_occasion column
+    # Supports JSON mapping for validation
     if memory.occasions:
         occasion_conditions = []
         for occasion in memory.occasions:
@@ -639,7 +881,8 @@ def build_sql_from_memory(memory: MemoryState) -> str:
         if occasion_conditions:
             conditions.append(f"({' OR '.join(occasion_conditions)} AND holiday_occasion IS NOT NULL)")
     
-    # Exclude occasion filtering
+    # ========== EXCLUDE OCCASION FILTERING ==========
+    # Negative preferences: User doesn't want certain occasions
     if memory.exclude_occasions:
         exclude_occasion_conditions = []
         for occasion in memory.exclude_occasions:
@@ -649,7 +892,12 @@ def build_sql_from_memory(memory: MemoryState) -> str:
         if exclude_occasion_conditions:
             conditions.append(f"({' AND '.join(exclude_occasion_conditions)})")
     
-    # Budget filtering
+    # ========== BUDGET FILTERING ==========
+    # Supports three budget modes:
+    # 1. Max budget: "under $100" → variant_price < 100
+    # 2. Min budget: "$50+" → variant_price >= 50
+    # 3. Around budget: "around $75" → variant_price BETWEEN 55 AND 95 (±$20)
+    # Always includes IS NOT NULL check to exclude products without prices
     if memory.budget.get("max") is not None:
         conditions.append(f"variant_price < {memory.budget['max']} AND variant_price IS NOT NULL")
     if memory.budget.get("min") is not None:
@@ -658,11 +906,14 @@ def build_sql_from_memory(memory: MemoryState) -> str:
         around = memory.budget["around"]
         conditions.append(f"variant_price BETWEEN {around-20} AND {around+20} AND variant_price IS NOT NULL")
     
-    # Effort level filtering
+    # ========== EFFORT LEVEL FILTERING ==========
+    # Filters by DIY level: "Ready To Go", "DIY In A Kit", "DIY From Scratch"
     if memory.effort_level:
         conditions.append(f"diy_level = '{memory.effort_level}' AND diy_level IS NOT NULL")
     
-    # Exclude effort level filtering
+    # ========== EXCLUDE EFFORT LEVEL FILTERING ==========
+    # Negative preferences: User doesn't want certain effort levels
+    # Example: "not DIY" → exclude_effort_levels: ["DIY From Scratch"]
     if memory.exclude_effort_levels:
         exclude_effort_conditions = []
         for effort in memory.exclude_effort_levels:
@@ -671,7 +922,9 @@ def build_sql_from_memory(memory: MemoryState) -> str:
         if exclude_effort_conditions:
             conditions.append(f"({' AND '.join(exclude_effort_conditions)})")
     
-    # Product type filtering
+    # ========== PRODUCT TYPE FILTERING ==========
+    # Filters by product type (bouquet, centerpiece, etc.)
+    # Searches in product_name and product_type_all_flowers columns
     if memory.product_type:
         product_lower = memory.product_type.lower()
         conditions.append(f"""
@@ -680,7 +933,9 @@ def build_sql_from_memory(memory: MemoryState) -> str:
             AND (product_name IS NOT NULL OR product_type_all_flowers IS NOT NULL)
         """)
     
-    # Exclude product type filtering
+    # ========== EXCLUDE PRODUCT TYPE FILTERING ==========
+    # Negative preferences: User doesn't want certain product types
+    # Example: "no centerpieces" → exclude_product_types: ["centerpiece"]
     if memory.exclude_product_types:
         exclude_product_conditions = []
         for product_type in memory.exclude_product_types:
@@ -693,7 +948,9 @@ def build_sql_from_memory(memory: MemoryState) -> str:
         if exclude_product_conditions:
             conditions.append(f"({' AND '.join(exclude_product_conditions)})")
     
-    # Quantity filtering
+    # ========== QUANTITY FILTERING ==========
+    # Filters by quantity (e.g., "100 stems")
+    # Extracts number from string and searches in variant_name
     if memory.quantity:
         # Extract just the number from quantity strings like "100 stems", "50 stems"
         import re
@@ -702,19 +959,33 @@ def build_sql_from_memory(memory: MemoryState) -> str:
             quantity_num = quantity_match.group()
             conditions.append(f"LOWER(variant_name) LIKE '%{quantity_num}%' AND variant_name IS NOT NULL")
     
-    # Season filtering (proper implementation)
+    # ========== SEASONALITY FILTERING ==========
+    # Most complex filtering: Checks if event date falls within product's
+    # availability ranges. Handles year-round products and up to 3 season ranges.
     if memory.season:
+        # Parse season input (e.g., "spring", "May 15") to (month, day)
         event_month, event_day = parse_season_to_date(memory.season)
         if event_month and event_day:
-            # Build the complex seasonality query
+            # Build the complex seasonality condition (year-round OR range matches)
             seasonality_condition = build_seasonality_condition(event_month, event_day)
             conditions.append(seasonality_condition)
     
-    # Build the final SQL
+    # ========== BUILD FINAL SQL QUERY ==========
+    # Combine all conditions with AND (all filters must match)
+    # If no conditions, use "TRUE" to return all products
     where_clause = " AND ".join(conditions) if conditions else "TRUE"
     
+    # Build the final SQL query using a window function approach for random sampling
+    # This is more efficient than ORDER BY RANDOM() with OFFSET (which can be slow)
+    # 
+    # Query structure:
+    # 1. filtered CTE: Apply all WHERE conditions, get distinct products (by product_name)
+    # 2. numbered CTE: Add row numbers and count total rows
+    # 3. params CTE: Calculate random offset (0 to total-6) for variety
+    # 4. Final SELECT: Return up to 6 products starting from random offset
     sql = f"""
     WITH filtered AS (
+        -- Step 1: Apply all filters and get distinct products
         SELECT DISTINCT ON (product_name)
             unique_id, product_name, variant_name, description_clean, variant_price,
             colors_raw, diy_level, product_type_all_flowers, group_category,
@@ -726,16 +997,19 @@ def build_sql_from_memory(memory: MemoryState) -> str:
         WHERE {where_clause}
     ),
     numbered AS (
+        -- Step 2: Add row numbers and count total rows
         SELECT f.*,
                ROW_NUMBER() OVER (ORDER BY unique_id) AS rn,
                COUNT(*)    OVER ()                    AS c
         FROM filtered f
     ),
     params AS (
+        -- Step 3: Calculate random offset for variety (ensures different results each time)
         SELECT FLOOR(random() * GREATEST(0, c - 6))::int AS r
         FROM numbered
         LIMIT 1
     )
+    -- Step 4: Return up to 6 products starting from random offset
     SELECT *
     FROM numbered n
     CROSS JOIN params p
@@ -745,11 +1019,21 @@ def build_sql_from_memory(memory: MemoryState) -> str:
     return sql.strip()
 
 # =========================
-# 7) Helpers
+# 7) HELPER FUNCTIONS (Formatting & Display)
 # =========================
+
 MONTH_ABBR = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 
 def first_nonempty(row: Dict[str, Any], keys: List[str]) -> Optional[str]:
+    """
+    Get the first non-empty value from a row for a list of keys.
+    
+    Used to handle cases where data might be in multiple columns.
+    Example: Try product_name first, then variant_name if product_name is empty.
+    
+    Returns:
+        str: First non-empty value, or None if all are empty
+    """
     for k in keys:
         v = row.get(k)
         if v is None:
@@ -760,11 +1044,23 @@ def first_nonempty(row: Dict[str, Any], keys: List[str]) -> Optional[str]:
     return None
 
 def format_availability(row: Dict[str, Any]) -> Optional[str]:
-    # Year-round?
+    """
+    Format product availability information for display.
+    
+    Converts database seasonality data into human-readable format:
+    - Year-round products → "Year-round"
+    - Seasonal products → "Jan 15 – Mar 20" (formatted date ranges)
+    - Multiple ranges → "Jan 15 – Mar 20 / Sep 10 – Nov 15"
+    
+    Returns:
+        str: Formatted availability string, or None if no data
+    """
+    # Year-round products
     if row.get("is_year_round") in (True, "t", "true", 1):
         return "Year-round"
 
     def fmt_range(sm, sd, em, ed):
+        """Format a single date range (e.g., "Jan 15 – Mar 20")"""
         try:
             if sm and sd and em and ed:
                 sm = int(sm); sd = int(sd); em = int(em); ed = int(ed)
@@ -774,18 +1070,43 @@ def format_availability(row: Dict[str, Any]) -> Optional[str]:
             return None
         return None
 
+    # Format all 3 possible ranges
     r1 = fmt_range(row.get("season_start_month"), row.get("season_start_day"),
                    row.get("season_end_month"), row.get("season_end_day"))
     r2 = fmt_range(row.get("season_range_2_start_month"), row.get("season_range_2_start_day"),
                    row.get("season_range_2_end_month"), row.get("season_range_2_end_day"))
     r3 = fmt_range(row.get("season_range_3_start_month"), row.get("season_range_3_start_day"),
                    row.get("season_range_3_end_month"), row.get("season_range_3_end_day"))
+    
+    # Combine non-empty ranges with " / " separator
     ranges = [r for r in [r1, r2, r3] if r]
     if ranges:
         return " / ".join(ranges)
     return None
 
 def render_rows(rows: List[Dict[str, Any]]) -> str:
+    """
+    Render database rows into user-friendly text format.
+    
+    Converts raw database results into a formatted string that displays:
+    - Product name and variant
+    - Price
+    - Colors
+    - Effort level
+    - Product type
+    - Recipe information
+    - Availability/seasonality
+    - Occasions
+    - Full description (not truncated - UI handles truncation)
+    
+    Also adds seasonality breakdown (how many seasonal vs year-round products).
+    
+    Args:
+        rows: List of database row dictionaries
+    
+    Returns:
+        str: Formatted product list string
+    """
     if not rows:
         return "I couldn't find matching products with those exact criteria. Try:\n• Removing some filters (like budget or season)\n• Using broader terms (e.g., 'flowers' instead of specific types)\n• Checking if the date/season is valid\n\nWant me to show you some general options instead?"
 
@@ -826,47 +1147,99 @@ def render_rows(rows: List[Dict[str, Any]]) -> str:
         if avail:  out_lines.append(f"   - Availability: {avail}")
         if occ:    out_lines.append(f"   - Occasions: {occ}")
         # Full description (UI will handle truncation with expand-on-hover)
+        # NOTE: We don't truncate here - the web UI handles truncation and
+        # expand-on-hover for better UX
         desc = first_nonempty(r, ["description_clean"])
         if desc:
             out_lines.append(f"   - Description: {desc}")
         out_lines.append("")  # blank line between items
     
-    # Add seasonality info at the end
+    # Add seasonality info at the end (only if there are seasonal products)
     out_lines.append(seasonality_info)
     return "\n".join(out_lines)
 
-# This function is replaced by the memory-based system
-# def ask_llm_for_sql(user_input: str) -> str:
-
 def run_sql(sql: str) -> (List[Dict[str, Any]], float):
+    """
+    Execute SQL query against the database.
+    
+    Args:
+        sql: SQL query string to execute
+    
+    Returns:
+        tuple: (list of row dictionaries, execution time in seconds)
+    """
     t0 = time.perf_counter()
     with ENGINE.connect() as conn:
         result = conn.execute(text(sql))
+        # Convert SQLAlchemy Row objects to dictionaries
         rows = [dict(row._mapping) for row in result]
     t1 = time.perf_counter()
     return rows, (t1 - t0)
 
 # =========================
-# 8) CLI wrapper with memory-based system
+# 8) FLOWER CONSULTANT CLASS (Main Interface)
 # =========================
+# This is the main class that users interact with. It orchestrates the entire
+# flow: parsing → memory update → SQL building → query execution → result rendering.
+
 class FlowerConsultant:
+    """
+    Main chatbot interface for flower recommendations.
+    
+    This class maintains conversation state (memory) and handles user queries.
+    It's used by both the CLI and the web demo.
+    
+    KEY FEATURES:
+    - Persistent memory: Remembers user preferences across messages
+    - Incremental filtering: Users can add/remove filters over multiple messages
+    - Fast querying: Deterministic SQL building for reliable results
+    - Debug mode: Optional debug output for development
+    
+    Usage:
+        bot = FlowerConsultant(debug=False)
+        bot.ask("I want red flowers under $100")
+        bot.ask("for a wedding")  # Adds to existing filters
+        bot.ask("remove the budget filter")  # Removes budget filter
+    """
+    
     def __init__(self, debug=False):
-        self.count = 0
+        """
+        Initialize the FlowerConsultant.
+        
+        Args:
+            debug: If True, print debug information (memory state, SQL, timings)
+        """
+        self.count = 0  # Query counter (for debugging)
         self.memory = MemoryState()  # Persistent memory across conversations
-        self.debug = debug  # Control debug output
+        self.debug = debug  # Control debug output (set to False for web UI)
 
     def ask(self, user_input: str):
+        """
+        Process a user query and return flower recommendations.
+        
+        This is the main entry point for user queries. It:
+        1. Parses user input using LLM
+        2. Updates memory state with new preferences
+        3. Builds SQL query from memory state
+        4. Executes SQL query against database
+        5. Renders results in user-friendly format
+        
+        Args:
+            user_input: User's natural language query (e.g., "I want red flowers under $100")
+        """
         self.count += 1
         if self.debug:
             print(f"\nProcessing query #{self.count}...")
 
-        # Step 1: Parse user input and update memory
+        # ========== STEP 1: PARSE USER INPUT ==========
+        # Use LLM to extract structured preferences from natural language
         try:
             t0 = time.perf_counter()
             parsed_data = parse_user_input(user_input)
             t_parse = time.perf_counter() - t0
             
             # Update memory with new preferences
+            # This handles both adding filters and removing filters (REMOVE_* commands)
             self.memory.update_from_dict(parsed_data)
             
             # Debug: Show current memory state
@@ -877,7 +1250,9 @@ class FlowerConsultant:
             print(f"Error parsing user input: {e}\n")
             return
 
-        # Step 2: Build SQL from memory
+        # ========== STEP 2: BUILD SQL FROM MEMORY ==========
+        # Convert memory state into SQL query
+        # This is deterministic (not LLM-generated) for reliability
         try:
             t0 = time.perf_counter()
             sql = build_sql_from_memory(self.memory)
@@ -886,27 +1261,31 @@ class FlowerConsultant:
             print(f"Error building SQL from memory: {e}\n")
             return
 
-        # Step 3: Execute SQL
+        # ========== STEP 3: EXECUTE SQL QUERY ==========
+        # Run the SQL query against the PostgreSQL database
         try:
             rows, t_sql = run_sql(sql)
         except Exception as e:
+            # If SQL execution fails, print the SQL for debugging
             print("SQL execution error:")
             print(sql)
             print(f"\nError: {e}\n")
             return
 
-        # Step 4: Render results
+        # ========== STEP 4: RENDER RESULTS ==========
+        # Convert database rows into user-friendly text format
         t0 = time.perf_counter()
         answer = render_rows(rows)
         t_render = time.perf_counter() - t0
 
-        # Print the answer
+        # Print the answer (for CLI) or return it (for web API)
         print("\nFlower Assistant:")
         print(answer)
         print("\n7. Book a consultation with a floral expert for personalized help:")
         print("https://fiftyflowers.com/products/personal-consultation-with-our-wedding-floral-expert?srsltid=AfmBOoqMQEmMIGbvgWhzct-LJYQY_yQ_d9_F8x4rpjJhrxa2-47Rfh51")
         
-        # Timings (optional - uncomment to see)
+        # ========== DEBUG OUTPUT (optional) ==========
+        # Show performance timings and SQL query for debugging
         if self.debug:
             print("\nTIMINGS:")
             print(f"  Parse (LLM)     : {t_parse:.3f}s")
@@ -915,21 +1294,28 @@ class FlowerConsultant:
             print(f"  Render (python) : {t_render:.3f}s")
             print(f"  TOTAL           : {t_parse + t_sql_build + t_sql + t_render:.3f}s")
 
-            # (Optional) Log SQL for debugging
+            # Log SQL for debugging
             print("\nSQL USED:")
             print(sql)
             print()
 
 # =========================
-# 6) Main
+# 9) MAIN ENTRY POINT (CLI Interface)
 # =========================
+# This is the command-line interface for testing the chatbot.
+# For production, use web_demo.py which provides a web API.
+
 if __name__ == "__main__":
     print()
     print("AI Flower Consultant ready! Type 'exit' to quit.")
     print("I'm your personal flower assistant! How can I help you find what you're looking for?")
     print("Give me some details about what you have in mind - color preferences, event type/date, effort level, etc.")
     print()
-    bot = FlowerConsultant()
+    
+    # Create chatbot instance (debug=True for CLI to see what's happening)
+    bot = FlowerConsultant(debug=True)
+    
+    # Main conversation loop
     while True:
         try:
             user_input = input("You: ")
